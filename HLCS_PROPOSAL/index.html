@@ -1,0 +1,817 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://iagenerativa.github.io/sarai-agi/HLCS_PROPOSAL/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>SARAi HLCS v0.1 - Propuesta de Implementación - SARAi_AGI Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sarai-hlcs-v01-propuesta-de-implementacion" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href=".." title="SARAi_AGI Docs" class="md-header__button md-logo" aria-label="SARAi_AGI Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SARAi_AGI Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SARAi HLCS v0.1 - Propuesta de Implementación
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/iagenerativa/sarai-agi" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iagenerativa/sarai-agi
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SARAi_AGI Docs" class="md-nav__button md-logo" aria-label="SARAi_AGI Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SARAi_AGI Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/iagenerativa/sarai-agi" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iagenerativa/sarai-agi
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ARCHITECTURE_OVERVIEW/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIGRATION_PLAN_v3_5_1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Plan de Migración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ROADMAP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-ejecutivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Resumen Ejecutivo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#analisis-de-la-propuesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Análisis de la Propuesta
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Análisis de la Propuesta">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fortalezas" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Fortalezas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#riesgos-identificados" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ Riesgos Identificados
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ajustes-recomendados" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔧 Ajustes Recomendados
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plan-de-implementacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 Plan de Implementación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📦 Plan de Implementación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fase-1-baseline-4-6-nov-2025-preview-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fase 1: Baseline (4-6 nov 2025) - "Preview Branch"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-2-auto-mode-7-10-nov-2025-conscious-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fase 2: Auto Mode (7-10 nov 2025) - "Conscious Preview"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-3-meta-reasoner-15-dic-2025-v02" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fase 3: Meta-Reasoner (15 dic 2025) - v0.2
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-4-graph-rag-31-ene-2026-v03" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fase 4: Graph-RAG (31 ene 2026) - v0.3
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-5-active-learning-28-feb-2026-v04" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fase 5: Active Learning (28 feb 2026) - v0.4
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Decisión Final
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Decisión Final">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aprobar-implementacion-en-feature-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ APROBAR implementación en feature branch
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metricas-de-exito-30-dias-post-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Métricas de Éxito (30 días post-merge)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎓 Conclusiones
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="sarai-hlcs-v01-propuesta-de-implementacion">SARAi HLCS v0.1 - Propuesta de Implementación<a class="headerlink" href="#sarai-hlcs-v01-propuesta-de-implementacion" title="Permanent link">&para;</a></h1>
+<h2 id="resumen-ejecutivo">📋 Resumen Ejecutivo<a class="headerlink" href="#resumen-ejecutivo" title="Permanent link">&para;</a></h2>
+<p><strong>Decisión:</strong> ✅ <strong>APROBAR</strong> implementación HLCS v0.1 como evolución natural de v3.6.0</p>
+<p><strong>Razón:</strong> El HLCS complementa perfectamente la integración recién completada sin modificar el core, alineado con la filosofía "zero-touch" de SARAi.</p>
+<hr />
+<h2 id="analisis-de-la-propuesta">🎯 Análisis de la Propuesta<a class="headerlink" href="#analisis-de-la-propuesta" title="Permanent link">&para;</a></h2>
+<h3 id="fortalezas">✅ Fortalezas<a class="headerlink" href="#fortalezas" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Arquitectura Zero-Touch</strong></li>
+<li>No modifica SARAi v3.6.0 core ✅</li>
+<li>Contenedor separado, fácil de desactivar</li>
+<li>
+<p>Compatible con filosofía modular de SARAi</p>
+</li>
+<li>
+<p><strong>Observable by Design</strong></p>
+</li>
+<li>Usa métricas Prometheus ya existentes</li>
+<li>Se integra con telemetría actual (advanced_telemetry.py)</li>
+<li>
+<p>Dashboard para visualización</p>
+</li>
+<li>
+<p><strong>Self-Healing</strong></p>
+</li>
+<li>Rollback automático si acciones fallan</li>
+<li>Threshold-based para evitar falsos positivos</li>
+<li>
+<p>Dry-run mode para testing seguro</p>
+</li>
+<li>
+<p><strong>Meta-Learning Progresivo</strong></p>
+</li>
+<li>v0.1: Basado en reglas + memoria narrativa</li>
+<li>v0.2: Meta-reasoner con MiniCPM-LoRA</li>
+<li>v0.3: Graph-RAG (Neo4j + FAISS)</li>
+<li>
+<p>v0.4: Active learning nocturno</p>
+</li>
+<li>
+<p><strong>KPIs Realistas</strong></p>
+</li>
+<li>-17% latencia (optimización cache/quantization)</li>
+<li>-0.8GB RAM (mejor gestión Model Pool)</li>
+<li>-62% fallbacks (ajuste dinámico de thresholds)</li>
+<li>-75% intervención humana (auto-tuning)</li>
+</ol>
+<h3 id="riesgos-identificados">⚠️ Riesgos Identificados<a class="headerlink" href="#riesgos-identificados" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Complejidad Operativa</strong></li>
+<li><strong>Riesgo:</strong> Añadir otro servicio a gestionar</li>
+<li><strong>Mitigación:</strong> Docker Compose simple, healthchecks robustos</li>
+<li>
+<p><strong>Severidad:</strong> Baja</p>
+</li>
+<li>
+<p><strong>Falsos Positivos</strong></p>
+</li>
+<li><strong>Riesgo:</strong> Acciones innecesarias que empeoren sistema</li>
+<li><strong>Mitigación:</strong> Rollback automático, dry-run mode, thresholds conservadores</li>
+<li>
+<p><strong>Severidad:</strong> Media → Controlada con v0.1</p>
+</li>
+<li>
+<p><strong>Overhead de Recursos</strong></p>
+</li>
+<li><strong>Riesgo:</strong> HLCS consumiendo RAM/CPU</li>
+<li><strong>Mitigación:</strong> Contenedor con límites (2GB RAM max, 2 CPU max)</li>
+<li>
+<p><strong>Severidad:</strong> Baja</p>
+</li>
+<li>
+<p><strong>Dependency Drift</strong></p>
+</li>
+<li><strong>Riesgo:</strong> HLCS queda desincronizado con SARAi</li>
+<li><strong>Mitigación:</strong> Contrato de interfaces versionado, tests de integración</li>
+<li><strong>Severidad:</strong> Media</li>
+</ol>
+<h3 id="ajustes-recomendados">🔧 Ajustes Recomendados<a class="headerlink" href="#ajustes-recomendados" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Fase Gradual</strong> (en lugar de merge directo)
+   <code>v3.6.0 → v3.6.1-hlcs-preview (feature branch)
+              ↓ (testing 7 días)
+           v3.7.0-conscious (merge a main)</code></p>
+</li>
+<li>
+<p><strong>Feature Flags</strong></p>
+</li>
+<li>Añadir <code>HLCS_ENABLED=true/false</code> en config</li>
+<li>
+<p>Permitir desactivación sin desplegar contenedor</p>
+</li>
+<li>
+<p><strong>Métricas de Health del HLCS</strong></p>
+</li>
+<li>Número de acciones propuestas/aplicadas</li>
+<li>Tasa de rollbacks</li>
+<li>Mejora promedio por acción</li>
+<li>
+<p>Latencia de detección de anomalías</p>
+</li>
+<li>
+<p><strong>Tests de Integración</strong></p>
+</li>
+<li><code>test_hlcs_integration.py</code> validando contrato de interfaces</li>
+<li>Simular anomalías y verificar respuestas</li>
+<li>Tests de rollback automático</li>
+</ol>
+<hr />
+<h2 id="plan-de-implementacion">📦 Plan de Implementación<a class="headerlink" href="#plan-de-implementacion" title="Permanent link">&para;</a></h2>
+<h3 id="fase-1-baseline-4-6-nov-2025-preview-branch">Fase 1: Baseline (4-6 nov 2025) - "Preview Branch"<a class="headerlink" href="#fase-1-baseline-4-6-nov-2025-preview-branch" title="Permanent link">&para;</a></h3>
+<p><strong>Objetivo:</strong> HLCS funcional en modo <code>suggest-only</code></p>
+<p><strong>Entregables:</strong>
+- ✅ <code>docker-compose.hlcs.yml</code> (COMPLETADO)
+- ✅ <code>hlcs/README.md</code> con documentación (COMPLETADO)
+- ✅ <code>hlcs/memory/episode.py</code> - Modelo de datos (COMPLETADO)
+- 🔄 <code>hlcs/core/self_monitor.py</code> - Detección de anomalías
+- 🔄 <code>hlcs/core/autocorrector.py</code> - Propuesta de acciones
+- 🔄 <code>hlcs/memory/narrative_memory.py</code> - Storage FAISS
+- 🔄 <code>hlcs/api/server.py</code> - FastAPI server
+- 🔄 <code>hlcs/Dockerfile</code> - Multi-stage build
+- 🔄 <code>tests/test_hlcs_*.py</code> - Suite completa</p>
+<p><strong>Criterios de Aceptación:</strong>
+- [ ] HLCS levanta sin errores
+- [ ] Dashboard accesible en localhost:8090
+- [ ] Detecta ≥1 anomalía en 1 hora de operación
+- [ ] Propone ≥1 acción (sin aplicarla)
+- [ ] Tests passing (≥80% coverage)</p>
+<h3 id="fase-2-auto-mode-7-10-nov-2025-conscious-preview">Fase 2: Auto Mode (7-10 nov 2025) - "Conscious Preview"<a class="headerlink" href="#fase-2-auto-mode-7-10-nov-2025-conscious-preview" title="Permanent link">&para;</a></h3>
+<p><strong>Objetivo:</strong> HLCS aplica acciones automáticamente</p>
+<p><strong>Entregables:</strong>
+- [ ] <code>hlcs/core/rollback_manager.py</code> - Gestión de rollbacks
+- [ ] Integración con SARAi <code>/config/live</code> endpoint
+- [ ] Logging completo de acciones
+- [ ] Métricas Prometheus del HLCS</p>
+<p><strong>Criterios de Aceptación:</strong>
+- [ ] HLCS aplica ≥1 acción correctiva en 24h
+- [ ] Rollback funciona si acción empeora &gt;10%
+- [ ] No crashes en 48h de operación continua
+- [ ] KPIs mejoran en ≥1 métrica</p>
+<h3 id="fase-3-meta-reasoner-15-dic-2025-v02">Fase 3: Meta-Reasoner (15 dic 2025) - v0.2<a class="headerlink" href="#fase-3-meta-reasoner-15-dic-2025-v02" title="Permanent link">&para;</a></h3>
+<p><strong>Objetivo:</strong> Decisiones más inteligentes con MLP</p>
+<p><strong>Entregables:</strong>
+- [ ] <code>hlcs/core/meta_reasoner.py</code> - MLP/LoRA
+- [ ] Training nocturno automático
+- [ ] Confidence scoring en acciones
+- [ ] A/B testing de acciones</p>
+<h3 id="fase-4-graph-rag-31-ene-2026-v03">Fase 4: Graph-RAG (31 ene 2026) - v0.3<a class="headerlink" href="#fase-4-graph-rag-31-ene-2026-v03" title="Permanent link">&para;</a></h3>
+<p><strong>Objetivo:</strong> Memoria estructurada con relaciones</p>
+<p><strong>Entregables:</strong>
+- [ ] Neo4j integration
+- [ ] Graph queries complejas
+- [ ] Visualización de episodios</p>
+<h3 id="fase-5-active-learning-28-feb-2026-v04">Fase 5: Active Learning (28 feb 2026) - v0.4<a class="headerlink" href="#fase-5-active-learning-28-feb-2026-v04" title="Permanent link">&para;</a></h3>
+<p><strong>Objetivo:</strong> Transfer learning progresivo</p>
+<p><strong>Entregables:</strong>
+- [ ] Dataset buffer de episodios
+- [ ] LoRA fine-tuning
+- [ ] Curriculum learning</p>
+<hr />
+<h2 id="decision-final">🚀 Decisión Final<a class="headerlink" href="#decision-final" title="Permanent link">&para;</a></h2>
+<h3 id="aprobar-implementacion-en-feature-branch">✅ <strong>APROBAR</strong> implementación en feature branch<a class="headerlink" href="#aprobar-implementacion-en-feature-branch" title="Permanent link">&para;</a></h3>
+<p><strong>Versión:</strong> v3.6.1-hlcs-preview → v3.7.0-conscious</p>
+<p><strong>Razones:</strong>
+1. Arquitectura sólida y bien pensada
+2. Zero-touch garantiza reversibilidad
+3. KPIs medibles y realistas
+4. Roadmap gradual con milestones claros
+5. Se alinea con visión AGI de SARAi</p>
+<p><strong>Condiciones:</strong>
+1. Comenzar en feature branch <code>feature/hlcs-0.1</code>
+2. Modo <code>suggest-only</code> durante 7 días de testing
+3. Rollback automático obligatorio desde v0.1
+4. Tests de integración completos
+5. Documentación exhaustiva</p>
+<p><strong>Timeline:</strong>
+- <strong>4 nov 2025</strong>: Crear feature branch + baseline
+- <strong>6 nov 2025</strong>: Tests passing + dry-run validado
+- <strong>10 nov 2025</strong>: Merge a <code>main</code> como v3.7.0-preview
+- <strong>15 nov 2025</strong>: Habilitar auto mode tras validación
+- <strong>1 dic 2025</strong>: Tag v3.7.0-conscious (estable)</p>
+<hr />
+<h2 id="metricas-de-exito-30-dias-post-merge">📊 Métricas de Éxito (30 días post-merge)<a class="headerlink" href="#metricas-de-exito-30-dias-post-merge" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Baseline</th>
+<th>Target</th>
+<th>Método de Medición</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Latencia P50</td>
+<td>2.3s</td>
+<td>&lt;2.0s (-13%)</td>
+<td>Prometheus <code>sarai_response_latency_seconds</code></td>
+</tr>
+<tr>
+<td>RAM P99</td>
+<td>11.2GB</td>
+<td>&lt;10.5GB (-0.7GB)</td>
+<td>Prometheus <code>sarai_ram_gb</code></td>
+</tr>
+<tr>
+<td>Fallback rate</td>
+<td>0.8%</td>
+<td>&lt;0.4% (-50%)</td>
+<td>Prometheus <code>sarai_fallback_total</code></td>
+</tr>
+<tr>
+<td>HLCS uptime</td>
+<td>N/A</td>
+<td>&gt;99%</td>
+<td>Docker healthchecks</td>
+</tr>
+<tr>
+<td>Episodios/semana</td>
+<td>0</td>
+<td>&gt;20</td>
+<td>HLCS <code>/api/v1/episodes</code></td>
+</tr>
+<tr>
+<td>Acciones aplicadas/semana</td>
+<td>0</td>
+<td>&gt;10</td>
+<td>HLCS metrics</td>
+</tr>
+<tr>
+<td>Rollbacks/semana</td>
+<td>N/A</td>
+<td>&lt;2</td>
+<td>HLCS metrics</td>
+</tr>
+<tr>
+<td>Intervención humana</td>
+<td>7/semana</td>
+<td>&lt;2/semana</td>
+<td>Logs manuales</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="conclusiones">🎓 Conclusiones<a class="headerlink" href="#conclusiones" title="Permanent link">&para;</a></h2>
+<p>El HLCS v0.1 representa una <strong>evolución natural</strong> del sistema integrado v3.6.0 que acabamos de completar. Su filosofía zero-touch y arquitectura modular lo hacen perfecto para:</p>
+<ol>
+<li><strong>Aprender de operación continua</strong> sin modificar código</li>
+<li><strong>Auto-tuning progresivo</strong> de parámetros críticos</li>
+<li><strong>Reducir carga operativa</strong> mediante self-healing</li>
+<li><strong>Preparar camino a AGI</strong> con meta-reasoning</li>
+</ol>
+<p><strong>Recomendación:</strong> Proceder con implementación en feature branch según plan propuesto.</p>
+<hr />
+<p><strong>Fecha:</strong> 4 nov 2025
+<strong>Autor:</strong> SARAi AGI Team
+<strong>Status:</strong> ✅ APROBADO para implementación
+<strong>Next Steps:</strong> Crear <code>feature/hlcs-0.1</code> branch y comenzar Fase 1</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 iagenerativa - <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

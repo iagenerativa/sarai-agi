@@ -1,0 +1,1405 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://iagenerativa.github.io/sarai-agi/ROADMAP_v4.0_SIDECARS_EVALUATION/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>SARAi v4.0 - Evaluación Estratégica de Arquitectura Sidecars - SARAi_AGI Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sarai-v40-evaluacion-estrategica-de-arquitectura-sidecars" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href=".." title="SARAi_AGI Docs" class="md-header__button md-logo" aria-label="SARAi_AGI Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SARAi_AGI Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SARAi v4.0 - Evaluación Estratégica de Arquitectura Sidecars
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/iagenerativa/sarai-agi" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iagenerativa/sarai-agi
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SARAi_AGI Docs" class="md-nav__button md-logo" aria-label="SARAi_AGI Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SARAi_AGI Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/iagenerativa/sarai-agi" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    iagenerativa/sarai-agi
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ARCHITECTURE_OVERVIEW/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Arquitectura
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIGRATION_PLAN_v3_5_1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Plan de Migración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ROADMAP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-ejecutivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Resumen Ejecutivo
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluacion-en-contexto-del-plan-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Evaluación en Contexto del Plan Global
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Evaluación en Contexto del Plan Global">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estado-actual-v351" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estado Actual (v3.5.1)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analisis-de-compatibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      Análisis de Compatibilidad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-sidecars-analisis-detallado" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Arquitectura Sidecars - Análisis Detallado
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Arquitectura Sidecars - Análisis Detallado">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#principios-de-diseno-v40" class="md-nav__link">
+    <span class="md-ellipsis">
+      Principios de Diseño v4.0
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Principios de Diseño v4.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fortalezas-910" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Fortalezas (9/10)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#punto-ciego-critico-sidecars-de-intervencion" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ Punto Ciego Crítico: Sidecars de Intervención
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparacion-sistema-de-plugins-3-vs-sidecars-v40" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔬 Comparación: Sistema de Plugins (#3) vs Sidecars v4.0
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔬 Comparación: Sistema de Plugins (#3) vs Sidecars v4.0">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solapamiento-identificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solapamiento Identificado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#propuesta-de-unificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Propuesta de Unificación
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plan-de-integracion-propuesto" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Plan de Integración Propuesto
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Plan de Integración Propuesto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcion-a-secuencial-recomendado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opción A: Secuencial (RECOMENDADO)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcion-b-paralelo-riesgoso" class="md-nav__link">
+    <span class="md-ellipsis">
+      Opción B: Paralelo (RIESGOSO)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision-estrategica" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎯 Decisión Estratégica
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Decisión Estratégica">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#para-v351-actual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para v3.5.1 (Actual)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-v360-proximo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para v3.6.0 (Próximo)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-v400-futuro" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para v4.0.0 (Futuro)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-v410-investigacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para v4.1.0 (Investigación)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kpis-comparativos" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 KPIs Comparativos
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 KPIs Comparativos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v351-optimizaciones-core" class="md-nav__link">
+    <span class="md-ellipsis">
+      v3.5.1 (Optimizaciones Core)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v400-sidecars-aditivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      v4.0.0 (Sidecars Aditivos)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v410-sidecars-intervencion" class="md-nav__link">
+    <span class="md-ellipsis">
+      v4.1.0 (Sidecars Intervención)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-de-cierre-v351-pre-v36" class="md-nav__link">
+    <span class="md-ellipsis">
+      🔐 Checklist de Cierre v3.5.1 (Pre-v3.6)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔐 Checklist de Cierre v3.5.1 (Pre-v3.6)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-completar-pipeline-paralelo" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Completar Pipeline Paralelo
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-benchmarks-produccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Benchmarks Producción
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-documentacion-final-v351" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Documentación Final v3.5.1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tag-y-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Tag y Merge
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roadmap-actualizado-post-analisis" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 Roadmap Actualizado (Post-Análisis)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recomendaciones-finales" class="md-nav__link">
+    <span class="md-ellipsis">
+      💡 Recomendaciones Finales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="💡 Recomendaciones Finales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#para-el-usuario-ahora" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para el Usuario (Ahora)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-v360-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para v3.6.0 (Diseño)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#para-v410-investigacion_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Para v4.1.0 (Investigación)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lecciones-aprendidas" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎓 Lecciones Aprendidas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎓 Lecciones Aprendidas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aciertos-de-la-propuesta-v40" class="md-nav__link">
+    <span class="md-ellipsis">
+      ✅ Aciertos de la Propuesta v4.0
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#puntos-de-mejora" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠️ Puntos de Mejora
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      📝 Conclusión
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="sarai-v40-evaluacion-estrategica-de-arquitectura-sidecars">SARAi v4.0 - Evaluación Estratégica de Arquitectura Sidecars<a class="headerlink" href="#sarai-v40-evaluacion-estrategica-de-arquitectura-sidecars" title="Permanent link">&para;</a></h1>
+<p><strong>Fecha</strong>: 3 de noviembre de 2025<br />
+<strong>Base</strong>: v3.5.1 (feat/v3.5.1-optim branch)<br />
+<strong>Propuesta</strong>: Arquitectura Sidecars para features de consciencia/ética  </p>
+<hr />
+<h2 id="resumen-ejecutivo">🎯 Resumen Ejecutivo<a class="headerlink" href="#resumen-ejecutivo" title="Permanent link">&para;</a></h2>
+<p><strong>Propuesta v4.0</strong>: Introducir features avanzadas (meta-learning, ethics_guard, vision enhancements) como <strong>sidecars opt-in</strong> que no modifican el core v3.6.</p>
+<p><strong>Veredicto</strong>: ✅ <strong>ARQUITECTURA CORRECTA</strong> con <strong>1 punto ciego crítico</strong> (sidecars de intervención)</p>
+<hr />
+<h2 id="evaluacion-en-contexto-del-plan-global">📊 Evaluación en Contexto del Plan Global<a class="headerlink" href="#evaluacion-en-contexto-del-plan-global" title="Permanent link">&para;</a></h2>
+<h3 id="estado-actual-v351">Estado Actual (v3.5.1)<a class="headerlink" href="#estado-actual-v351" title="Permanent link">&para;</a></h3>
+<pre><code>ROADMAP GLOBAL:
+├─ v3.5.0 ✅ COMPLETADO (BASE ESTABLE)
+│  └─ Ultra-Lean + Advanced Systems
+│
+├─ v3.5.1 🔄 EN PROGRESO (ALTA PRIORIDAD)
+│  ├─ #1 Pipeline Paralelo: 10/15 tests (67%) ✅
+│  ├─ #2 Quantización Dinámica: 18/18 tests (100%) ✅
+│  ├─ #3 Sistema de Plugins: ⏳ PENDIENTE
+│  ├─ #4 Observabilidad Avanzada: ⏳ PENDIENTE
+│  └─ #5 Testing Inteligente: ⏳ PENDIENTE
+│
+├─ v3.6.0 📋 PLANIFICADO (SWARM PRODUCTION)
+│  └─ Arquitectura distribuida Ultra-Lean
+│
+└─ v4.0.0 🆕 PROPUESTA (SIDECARS)
+   ├─ meta_learning (Sidecar Aditivo)
+   ├─ ethics_guard (Sidecar Intervención)
+   └─ vision (Sidecar Aditivo)
+</code></pre>
+<h3 id="analisis-de-compatibilidad">Análisis de Compatibilidad<a class="headerlink" href="#analisis-de-compatibilidad" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspecto</th>
+<th>v3.5.1 ALTA PRIORIDAD</th>
+<th>v4.0 Sidecars</th>
+<th>Compatibilidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pipeline Paralelo</strong></td>
+<td>ThreadPoolExecutor</td>
+<td>Sidecars post-response</td>
+<td>✅ Compatible (añadir en Phase 4)</td>
+</tr>
+<tr>
+<td><strong>Quantización Dinámica</strong></td>
+<td>Multi-factor selection</td>
+<td>Sin cambios core</td>
+<td>✅ Compatible 100%</td>
+</tr>
+<tr>
+<td><strong>Sistema de Plugins (#3)</strong></td>
+<td>Hot-reload skills</td>
+<td>Similar a Sidecars</td>
+<td>⚠️ SOLAPAMIENTO</td>
+</tr>
+<tr>
+<td><strong>Observabilidad (#4)</strong></td>
+<td>Prometheus + Grafana</td>
+<td>Sidecars observables</td>
+<td>✅ Sinergia</td>
+</tr>
+<tr>
+<td><strong>Testing (#5)</strong></td>
+<td>Regresión automatizada</td>
+<td>v4_compat_test.py</td>
+<td>✅ Complementario</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusión</strong>: v4.0 Sidecars es <strong>complementario</strong> a v3.5.1, pero <strong>compite</strong> con #3 Sistema de Plugins.</p>
+<hr />
+<h2 id="arquitectura-sidecars-analisis-detallado">🏗️ Arquitectura Sidecars - Análisis Detallado<a class="headerlink" href="#arquitectura-sidecars-analisis-detallado" title="Permanent link">&para;</a></h2>
+<h3 id="principios-de-diseno-v40">Principios de Diseño v4.0<a class="headerlink" href="#principios-de-diseno-v40" title="Permanent link">&para;</a></h3>
+<h4 id="fortalezas-910">✅ Fortalezas (9/10)<a class="headerlink" href="#fortalezas-910" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Aislamiento del Core</strong> (10/10)
+   <code>yaml
+   # config/v4-switches.yaml
+   v4_switches:
+     meta_learning: false
+     ethics_guard: false
+     vision: false</code></li>
+<li>Zero-cost cuando desactivado</li>
+<li>
+<p>Core v3.6 no se modifica</p>
+</li>
+<li>
+<p><strong>Reversibilidad Total</strong> (10/10)
+   <code>bash
+   # Rollback instantáneo
+   rm config/v4-switches.yaml
+   make clean</code></p>
+</li>
+<li>Sin migraciones de base de datos</li>
+<li>
+<p>Sin cambios de esquema</p>
+</li>
+<li>
+<p><strong>Seguridad por Diseño</strong> (8/10)
+   <code>INPUT → Core v3.6 → RESPONSE → [Sidecars] → OUTPUT</code></p>
+</li>
+<li>Sidecars post-response: ✅ No bloquean</li>
+<li>
+<p><strong>PERO</strong>: ⚠️ No pueden prevenir (ver crítica)</p>
+</li>
+<li>
+<p><strong>CI/CD No Bloqueante</strong> (10/10)
+   <code>yaml
+   # .github/workflows/ci.yml
+   test_v4_compat:
+     continue-on-error: true  # No frena release</code></p>
+</li>
+<li>
+<p><strong>Onboarding Rápido</strong> (10/10)
+   <code>bash
+   git apply patches/v4-sidecars.patch
+   docker build --build-arg ENABLE_V4=true
+   # &lt; 5 minutos</code></p>
+</li>
+</ol>
+<p><strong>Promedio Fortalezas</strong>: 9.6/10</p>
+<h4 id="punto-ciego-critico-sidecars-de-intervencion">⚠️ Punto Ciego Crítico: Sidecars de Intervención<a class="headerlink" href="#punto-ciego-critico-sidecars-de-intervencion" title="Permanent link">&para;</a></h4>
+<p><strong>Problema Fundamental</strong>:</p>
+<pre><code class="language-python"># MODELO ACTUAL (Post-Proceso) - INSUFICIENTE para ethics_guard
+def process_query(query: str) -&gt; str:
+    # 1. Core genera respuesta
+    response = core_v36.generate(query)  # ⚠️ Ya generada
+
+    # 2. Sidecar ethics_guard analiza
+    if ethics_guard.is_unethical(response):
+        # ❌ DEMASIADO TARDE: respuesta ya formada
+        return &quot;⚠️ Advertencia: respuesta bloqueada&quot;
+
+    return response
+</code></pre>
+<p><strong>Modelo Necesario (Middleware Chain)</strong>:</p>
+<pre><code class="language-python"># MODELO v4.1 PROPUESTO - Intervención Real
+def process_query(query: str) -&gt; str:
+    # 1. Pre-Input Filtering
+    if ethics_guard.is_malicious_intent(query):
+        return safe_rejection_response()
+
+    # 2. Core genera respuesta
+    response = core_v36.generate(query)
+
+    # 3. Pre-Output Filtering (CRÍTICO)
+    if ethics_guard.is_unethical(response):
+        # ✅ BLOQUEO ANTES DE ENVIAR
+        return sanitize_or_reject(response)
+
+    # 4. Sidecars Aditivos (opcional)
+    meta_learning.log_interaction(query, response)
+
+    return response
+</code></pre>
+<p><strong>Diferencia Clave</strong>:
+- <strong>Sidecars Aditivos</strong>: Se ejecutan en paralelo/después, añaden contexto
+- <strong>Sidecars de Intervención</strong>: Bloquean el pipeline, añaden latencia</p>
+<hr />
+<h2 id="comparacion-sistema-de-plugins-3-vs-sidecars-v40">🔬 Comparación: Sistema de Plugins (#3) vs Sidecars v4.0<a class="headerlink" href="#comparacion-sistema-de-plugins-3-vs-sidecars-v40" title="Permanent link">&para;</a></h2>
+<h3 id="solapamiento-identificado">Solapamiento Identificado<a class="headerlink" href="#solapamiento-identificado" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Plugins v3.5.1 (#3)</th>
+<th>Sidecars v4.0</th>
+<th>Recomendación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hot-reload</strong></td>
+<td>✅ YAML-based</td>
+<td>✅ Flag-based</td>
+<td><strong>UNIFICAR</strong></td>
+</tr>
+<tr>
+<td><strong>Aislamiento</strong></td>
+<td>⏳ Containerizado</td>
+<td>✅ Post-response</td>
+<td>Sidecars superior</td>
+</tr>
+<tr>
+<td><strong>Descubrimiento</strong></td>
+<td>Plugin discovery system</td>
+<td>Manual activation</td>
+<td>Plugins superior</td>
+</tr>
+<tr>
+<td><strong>Scope</strong></td>
+<td>Skills (prompting)</td>
+<td>Consciencia/Ética</td>
+<td>Diferentes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="propuesta-de-unificacion">Propuesta de Unificación<a class="headerlink" href="#propuesta-de-unificacion" title="Permanent link">&para;</a></h3>
+<p><strong>v3.6 Unified Plugin Architecture</strong>:</p>
+<pre><code class="language-yaml"># config/plugins.yaml (UNIFICADO)
+plugins:
+  # Tipo 1: Skills (v3.5.1 #3)
+  skills:
+    programming:
+      type: prompt_modifier
+      hot_reload: true
+
+    creative:
+      type: prompt_modifier
+      hot_reload: true
+
+  # Tipo 2: Sidecars Aditivos (v4.0)
+  sidecars_additive:
+    meta_learning:
+      type: post_response
+      async: true
+      enabled: false
+
+    vision:
+      type: context_enrichment
+      async: true
+      enabled: false
+
+  # Tipo 3: Sidecars de Intervención (v4.1 FUTURO)
+  sidecars_intervention:
+    ethics_guard:
+      type: pre_output_filter
+      blocking: true
+      max_latency_ms: 50
+      enabled: false
+</code></pre>
+<p><strong>Beneficios</strong>:
+- ✅ Un solo sistema de configuración
+- ✅ Tres tipos claros de plugins
+- ✅ Backward compatible con v3.5.1 #3</p>
+<hr />
+<h2 id="plan-de-integracion-propuesto">📋 Plan de Integración Propuesto<a class="headerlink" href="#plan-de-integracion-propuesto" title="Permanent link">&para;</a></h2>
+<h3 id="opcion-a-secuencial-recomendado">Opción A: Secuencial (RECOMENDADO)<a class="headerlink" href="#opcion-a-secuencial-recomendado" title="Permanent link">&para;</a></h3>
+<pre><code>v3.5.1 (NOW)
+  ├─ Completar #1 Pipeline (refinar 5 tests)
+  ├─ Completar #2 Quantización (100% ✅)
+  └─ Benchmarks producción
+       ↓
+v3.6.0 (Swarm Production)
+  ├─ Integrar #3 Plugins como base
+  ├─ Añadir #4 Observabilidad
+  └─ Tag estable + firma
+       ↓
+v4.0.0 (Sidecars sobre Plugins)
+  ├─ Extender Plugins con tipo &quot;sidecar_additive&quot;
+  ├─ Implementar meta_learning + vision
+  └─ Validar en staging (flags off por defecto)
+       ↓
+v4.1.0 (Middleware Chain)
+  ├─ Diseñar hook pre_output_filter
+  ├─ Implementar ethics_guard como intervención
+  └─ Aceptar latencia añadida (~50ms)
+</code></pre>
+<p><strong>Tiempo estimado</strong>:
+- v3.5.1 → v3.6.0: 2 semanas
+- v3.6.0 → v4.0.0: 3 semanas
+- v4.0.0 → v4.1.0: 2 semanas
+- <strong>TOTAL</strong>: 7 semanas</p>
+<h3 id="opcion-b-paralelo-riesgoso">Opción B: Paralelo (RIESGOSO)<a class="headerlink" href="#opcion-b-paralelo-riesgoso" title="Permanent link">&para;</a></h3>
+<pre><code>v3.5.1 (NOW)
+  ├─ Feature Branch: feat/v3.5.1-optim (10/15 tests)
+  └─ Feature Branch: feat/v4.0-sidecars (desarrollo paralelo)
+       ↓
+v3.6.0 (Merge Conflict)
+  └─ Resolver conflictos entre Plugins y Sidecars
+       ❌ RIESGO ALTO
+</code></pre>
+<p><strong>NO RECOMENDADO</strong>: Conflictos de arquitectura inevitables.</p>
+<hr />
+<h2 id="decision-estrategica">🎯 Decisión Estratégica<a class="headerlink" href="#decision-estrategica" title="Permanent link">&para;</a></h2>
+<h3 id="para-v351-actual">Para v3.5.1 (Actual)<a class="headerlink" href="#para-v351-actual" title="Permanent link">&para;</a></h3>
+<p><strong>MANTENER FOCO</strong>:
+1. ✅ Refinar Pipeline (5 tests pendientes)
+2. ✅ Benchmarks producción
+3. ⏳ <strong>POSPONER #3 Plugins</strong> hasta diseño unificado</p>
+<p><strong>Modificación del Roadmap v3.5.1</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Optimización</th>
+<th>Estado Actual</th>
+<th>Nueva Prioridad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pipeline Paralelo</td>
+<td>10/15 (67%)</td>
+<td>⭐⭐⭐ ALTA (completar)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Quantización Dinámica</td>
+<td>18/18 (100%)</td>
+<td>✅ DONE</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Sistema de Plugins</td>
+<td>⏳ PENDIENTE</td>
+<td>⭐ BAJA (diferir a v3.6)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Observabilidad Avanzada</td>
+<td>⏳ PENDIENTE</td>
+<td>⭐⭐ MEDIA</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Testing Inteligente</td>
+<td>⏳ PENDIENTE</td>
+<td>⭐ BAJA</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Justificación</strong>: Evitar duplicación de esfuerzo con diseño unificado Plugins/Sidecars en v3.6.</p>
+<h3 id="para-v360-proximo">Para v3.6.0 (Próximo)<a class="headerlink" href="#para-v360-proximo" title="Permanent link">&para;</a></h3>
+<p><strong>DISEÑAR UNIFIED PLUGIN ARCHITECTURE</strong>:</p>
+<pre><code>v3.6.0 Scope:
+  1. Diseño unificado: Skills + Sidecars Aditivos
+  2. Implementación base de Plugins (#3)
+  3. Observabilidad (#4) integrada
+  4. Swarm Production ready
+</code></pre>
+<h3 id="para-v400-futuro">Para v4.0.0 (Futuro)<a class="headerlink" href="#para-v400-futuro" title="Permanent link">&para;</a></h3>
+<p><strong>AÑADIR SIDECARS SOBRE PLUGINS</strong>:</p>
+<pre><code>v4.0.0 Scope:
+  1. Extender Plugins con sidecars_additive
+  2. meta_learning (observación)
+  3. vision (contexto)
+  4. Flags off por defecto
+  5. Zero overhead cuando desactivado
+</code></pre>
+<h3 id="para-v410-investigacion">Para v4.1.0 (Investigación)<a class="headerlink" href="#para-v410-investigacion" title="Permanent link">&para;</a></h3>
+<p><strong>MIDDLEWARE CHAIN (BREAKING CHANGE)</strong>:</p>
+<pre><code>v4.1.0 Scope:
+  1. Hook pre_output_filter en core
+  2. ethics_guard como intervención
+  3. Aceptar +50ms latencia
+  4. Documentar trade-offs
+</code></pre>
+<hr />
+<h2 id="kpis-comparativos">📊 KPIs Comparativos<a class="headerlink" href="#kpis-comparativos" title="Permanent link">&para;</a></h2>
+<h3 id="v351-optimizaciones-core">v3.5.1 (Optimizaciones Core)<a class="headerlink" href="#v351-optimizaciones-core" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>v3.5.0</th>
+<th>v3.5.1 Target</th>
+<th>Impacto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Latencia P50</td>
+<td>295ms</td>
+<td>236ms</td>
+<td>-20% ⭐⭐⭐</td>
+</tr>
+<tr>
+<td>RAM P50</td>
+<td>5.3GB</td>
+<td>4.8GB</td>
+<td>-0.5GB ⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="v400-sidecars-aditivos">v4.0.0 (Sidecars Aditivos)<a class="headerlink" href="#v400-sidecars-aditivos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>v3.6.0</th>
+<th>v4.0.0 Target</th>
+<th>Impacto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Latencia P50</td>
+<td>220ms</td>
+<td>220ms</td>
+<td><strong>0ms</strong> ✅ (async)</td>
+</tr>
+<tr>
+<td>RAM P50</td>
+<td>4.6GB</td>
+<td>4.7GB</td>
+<td>+0.1GB (acceptable)</td>
+</tr>
+<tr>
+<td>Observabilidad</td>
+<td>Prometheus</td>
+<td>+Meta-learning</td>
+<td>NEW</td>
+</tr>
+</tbody>
+</table>
+<h3 id="v410-sidecars-intervencion">v4.1.0 (Sidecars Intervención)<a class="headerlink" href="#v410-sidecars-intervencion" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>v4.0.0</th>
+<th>v4.1.0 Target</th>
+<th>Impacto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Latencia P50</td>
+<td>220ms</td>
+<td><strong>270ms</strong></td>
+<td><strong>+50ms</strong> ⚠️</td>
+</tr>
+<tr>
+<td>RAM P50</td>
+<td>4.7GB</td>
+<td>4.8GB</td>
+<td>+0.1GB</td>
+</tr>
+<tr>
+<td>Seguridad</td>
+<td>Básica</td>
+<td>Ethics filtering</td>
+<td>NEW ⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Trade-off v4.1</strong>: +50ms latencia a cambio de seguridad ética real.</p>
+<hr />
+<h2 id="checklist-de-cierre-v351-pre-v36">🔐 Checklist de Cierre v3.5.1 (Pre-v3.6)<a class="headerlink" href="#checklist-de-cierre-v351-pre-v36" title="Permanent link">&para;</a></h2>
+<p>Antes de proceder a v3.6.0 Swarm:</p>
+<h3 id="1-completar-pipeline-paralelo">1. Completar Pipeline Paralelo<a class="headerlink" href="#1-completar-pipeline-paralelo" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash"># Refinar 5 tests pendientes
+pytest tests/test_pipeline_parallel_v351.py -v
+# Target: 15/15 PASSING (100%)
+</code></pre>
+<p><strong>Tasks</strong>:
+- [ ] Agregar atributo <code>parallel_mode</code> a PipelineMetrics
+- [ ] Fix auto-detect workers (max_workers=None)
+- [ ] Validar metadata subscriptable
+- [ ] Corregir fallback alpha/beta (0.6 vs 0.5)
+- [ ] Test full suite: 15/15</p>
+<h3 id="2-benchmarks-produccion">2. Benchmarks Producción<a class="headerlink" href="#2-benchmarks-produccion" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash"># Ejecutar bajo carga real
+python scripts/benchmark_production.py --duration 3600
+</code></pre>
+<p><strong>KPIs a validar</strong>:
+- [ ] Latencia P50 &lt; 240ms
+- [ ] RAM P50 &lt; 4.9GB
+- [ ] Throughput &gt; 50 req/s
+- [ ] CPU usage &lt; 65%</p>
+<h3 id="3-documentacion-final-v351">3. Documentación Final v3.5.1<a class="headerlink" href="#3-documentacion-final-v351" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash"># Generar reporte completo
+make docs-release
+</code></pre>
+<p><strong>Documentos</strong>:
+- [ ] BENCHMARK_REPORT_v3.5.1.md (✅ ya existe)
+- [ ] CHANGELOG_v3.5.1.md
+- [ ] MIGRATION_GUIDE_v3.5.0_to_v3.5.1.md</p>
+<h3 id="4-tag-y-merge">4. Tag y Merge<a class="headerlink" href="#4-tag-y-merge" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash">git tag -s v3.5.1 -m &quot;SARAi v3.5.1 - Core Optimizations&quot;
+git push origin v3.5.1
+git checkout main
+git merge feat/v3.5.1-optim
+</code></pre>
+<hr />
+<h2 id="roadmap-actualizado-post-analisis">🚀 Roadmap Actualizado (Post-Análisis)<a class="headerlink" href="#roadmap-actualizado-post-analisis" title="Permanent link">&para;</a></h2>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│ v3.5.1 (NOW) - ALTA PRIORIDAD                          │
+│ Fecha: 3-10 Nov 2025                                   │
+├─────────────────────────────────────────────────────────┤
+│ ✅ #1 Pipeline Paralelo (refinar 5 tests)              │
+│ ✅ #2 Quantización Dinámica (100%)                      │
+│ ⏳ Benchmarks producción                                │
+│ ⏳ Tag v3.5.1                                            │
+└─────────────────────────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────┐
+│ v3.6.0 (NEXT) - Unified Plugin Architecture            │
+│ Fecha: 11-24 Nov 2025                                  │
+├─────────────────────────────────────────────────────────┤
+│ 🆕 Diseño unificado: Skills + Sidecars                 │
+│ 🆕 Implementar #3 Plugins (hot-reload)                 │
+│ 🆕 Implementar #4 Observabilidad (Prometheus)          │
+│ 🆕 Swarm Production (mTLS + Redis)                     │
+│ 🆕 Tag v3.6.0-prod + firma Cosign                      │
+└─────────────────────────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────┐
+│ v4.0.0 (FUTURE) - Sidecars Aditivos                    │
+│ Fecha: 25 Nov - 15 Dic 2025                            │
+├─────────────────────────────────────────────────────────┤
+│ 🆕 Extender Plugins con sidecars_additive              │
+│ 🆕 meta_learning (observación)                         │
+│ 🆕 vision (contexto)                                   │
+│ 🆕 Flags off por defecto (opt-in)                      │
+│ 🆕 Zero overhead cuando desactivado                    │
+└─────────────────────────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────┐
+│ v4.1.0 (RESEARCH) - Middleware Chain                   │
+│ Fecha: 16 Dic 2025 - Ene 2026                          │
+├─────────────────────────────────────────────────────────┤
+│ 🔬 Diseñar hook pre_output_filter                      │
+│ 🔬 ethics_guard como intervención                      │
+│ ⚠️ Aceptar +50ms latencia (trade-off)                  │
+│ 🔬 Documentar breaking changes                         │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h2 id="recomendaciones-finales">💡 Recomendaciones Finales<a class="headerlink" href="#recomendaciones-finales" title="Permanent link">&para;</a></h2>
+<h3 id="para-el-usuario-ahora">Para el Usuario (Ahora)<a class="headerlink" href="#para-el-usuario-ahora" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>COMPLETAR v3.5.1</strong>:</li>
+<li>Refinar 5 tests del pipeline</li>
+<li>Ejecutar benchmarks producción</li>
+<li>
+<p>Tag y merge a main</p>
+</li>
+<li>
+<p><strong>NO IMPLEMENTAR #3 Plugins todavía</strong>:</p>
+</li>
+<li>Esperar diseño unificado v3.6</li>
+<li>
+<p>Evitar duplicación con Sidecars</p>
+</li>
+<li>
+<p><strong>DOCUMENTAR la propuesta v4.0</strong>:</p>
+</li>
+<li>Guardar este análisis</li>
+<li>Usar como base para diseño v3.6</li>
+</ol>
+<h3 id="para-v360-diseno">Para v3.6.0 (Diseño)<a class="headerlink" href="#para-v360-diseno" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Unificar Plugins + Sidecars</strong>:</li>
+<li>Tres tipos claros (skills, aditivos, intervención)</li>
+<li>Una sola configuración YAML</li>
+<li>
+<p>API común de activación</p>
+</li>
+<li>
+<p><strong>Implementar solo Sidecars Aditivos</strong>:</p>
+</li>
+<li>meta_learning</li>
+<li>vision</li>
+<li>Dejar intervención para v4.1</li>
+</ol>
+<h3 id="para-v410-investigacion_1">Para v4.1.0 (Investigación)<a class="headerlink" href="#para-v410-investigacion_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Diseñar Middleware Chain</strong>:</li>
+<li>Hook pre_output_filter</li>
+<li>Trade-off latencia vs seguridad</li>
+<li>
+<p>Documentar breaking changes</p>
+</li>
+<li>
+<p><strong>Validar ethics_guard</strong>:</p>
+</li>
+<li>Dataset de casos éticos</li>
+<li>Métricas de falsos positivos</li>
+<li>Benchmarks de latencia añadida</li>
+</ol>
+<hr />
+<h2 id="lecciones-aprendidas">🎓 Lecciones Aprendidas<a class="headerlink" href="#lecciones-aprendidas" title="Permanent link">&para;</a></h2>
+<h3 id="aciertos-de-la-propuesta-v40">✅ Aciertos de la Propuesta v4.0<a class="headerlink" href="#aciertos-de-la-propuesta-v40" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Aislamiento del core</strong>: Perfecto para features experimentales</li>
+<li><strong>Reversibilidad</strong>: Esencial en producción</li>
+<li><strong>Flags opt-in</strong>: Correcta filosofía de adopción</li>
+<li><strong>CI/CD no bloqueante</strong>: Permite innovación sin riesgo</li>
+</ol>
+<h3 id="puntos-de-mejora">⚠️ Puntos de Mejora<a class="headerlink" href="#puntos-de-mejora" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Diferenciación de Sidecars</strong>: Aditivos vs Intervención</li>
+<li><strong>Solapamiento con Plugins</strong>: Unificar en v3.6</li>
+<li><strong>Latencia de Intervención</strong>: Aceptar trade-off explícito</li>
+<li><strong>Orden de Implementación</strong>: Secuencial &gt; Paralelo</li>
+</ol>
+<hr />
+<h2 id="conclusion">📝 Conclusión<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p><strong>La propuesta v4.0 Sidecars es correcta en principio, pero requiere refinamiento arquitectónico</strong>:</p>
+<ul>
+<li>✅ <strong>ACEPTAR</strong>: Filosofía de Sidecars Aditivos (meta_learning, vision)</li>
+<li>⚠️ <strong>REFINAR</strong>: Diseño de Sidecars de Intervención (ethics_guard)</li>
+<li>🔄 <strong>UNIFICAR</strong>: Con Sistema de Plugins (#3) en v3.6.0</li>
+<li>📋 <strong>PRIORIZAR</strong>: Completar v3.5.1 antes de diseñar v3.6</li>
+</ul>
+<p><strong>Veredicto final</strong>: 9/10 como propuesta, con path claro de evolución v3.5.1 → v3.6.0 → v4.0.0 → v4.1.0.</p>
+<hr />
+<p><strong>Autor</strong>: GitHub Copilot + Usuario<br />
+<strong>Fecha</strong>: 3 de noviembre de 2025<br />
+<strong>Estado</strong>: 📋 STRATEGIC ANALYSIS</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 iagenerativa - <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "content.code.copy"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
