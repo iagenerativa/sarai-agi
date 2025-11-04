@@ -64,8 +64,9 @@ SENTINEL_RESPONSES = {
     "web_search_disabled": (
         "Lo siento, la búsqueda web está temporalmente deshabilitada "
         "debido a que el sistema está en Modo Seguro. "
-        "Esto es una medida de protección automática para garantizar la integridad de mis respuestas. "
-        "Por favor, intenta de nuevo más tarde o pregunta algo que pueda responder con mi conocimiento interno."
+        "Esto es una medida de protección automática para garantizar "
+        "la integridad de mis respuestas. Por favor, intenta de nuevo más tarde "
+        "o pregunta algo que pueda responder con mi conocimiento interno."
     ),
     "web_search_failed": (
         "No pude acceder a información actualizada en este momento. "
@@ -79,7 +80,8 @@ SENTINEL_RESPONSES = {
         "¿Podrías reformular tu pregunta de manera más específica?"
     ),
     "model_unavailable": (
-        "No puedo procesar esta consulta en este momento porque el modelo de síntesis no está disponible. "
+        "No puedo procesar esta consulta en este momento porque "
+        "el modelo de síntesis no está disponible. "
         "Por favor, intenta de nuevo más tarde."
     )
 }
@@ -210,7 +212,8 @@ def execute_rag(state: Dict, model_pool) -> Dict:
             "Usando ÚNICAMENTE los siguientes extractos, responde a la pregunta del usuario.",
             "REGLAS CRÍTICAS:",
             "- Cita la fuente (URL) cuando uses un extracto",
-            "- Si los extractos no contienen la respuesta, di 'No encontré información concluyente'",
+            "- Si los extractos no contienen la respuesta, "
+            "di 'No encontré información concluyente'",
             "- NO inventes información que no esté en los extractos",
             "- Sé conciso y directo",
             "",

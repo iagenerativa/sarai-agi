@@ -53,7 +53,7 @@ except ImportError:
 
 try:
     import chromadb
-    from chromadb.config import Settings
+    from chromadb.config import Settings  # noqa: F401
     CHROMA_AVAILABLE = True
 except ImportError:
     chromadb = None
@@ -83,7 +83,7 @@ class VectorDB:
         collection_name: Nombre de la colección
         embedding_dim: Dimensión de embeddings (default: 384 para all-MiniLM-L6-v2)
     """
-    
+
     def __init__(
         self,
         backend: Backend = "qdrant",
@@ -96,14 +96,14 @@ class VectorDB:
         self.backend = backend
         self.collection_name = collection_name
         self.embedding_dim = embedding_dim
-        
+
         # Inicializar cliente según backend
         if backend == "qdrant":
             if not QDRANT_AVAILABLE:
                 raise ImportError(
                     "qdrant-client no disponible. Instalar con: pip install qdrant-client"
                 )
-            
+
             try:
                 self.client = QdrantClient(host=host, port=port)
                 self._init_qdrant_collection()
@@ -111,13 +111,13 @@ class VectorDB:
             except Exception as e:
                 logger.error(f"Error conectando a Qdrant: {e}")
                 raise
-        
+
         elif backend == "chroma":
             if not CHROMA_AVAILABLE:
                 raise ImportError(
                     "chromadb no disponible. Instalar con: pip install chromadb"
                 )
-            
+
             try:
                 os.makedirs(persist_directory, exist_ok=True)
                 self.client = chromadb.PersistentClient(path=persist_directory)
@@ -129,20 +129,20 @@ class VectorDB:
             except Exception as e:
                 logger.error(f"Error inicializando ChromaDB: {e}")
                 raise
-        
+
         else:
             raise ValueError(f"Backend inválido: {backend}. Usar 'qdrant' o 'chroma'")
-        
+
         # Embedder (placeholder - se reemplazará con Embedding Gemma)
         self._embedder = None
-    
+
     def _init_qdrant_collection(self):
         """Inicializa colección en Qdrant si no existe"""
         try:
             # Verificar si colección existe
             collections = self.client.get_collections().collections
             collection_names = [c.name for c in collections]
-            
+
             if self.collection_name not in collection_names:
                 # Crear colección
                 self.client.create_collection(
@@ -155,11 +155,11 @@ class VectorDB:
                 logger.info(f"Colección Qdrant creada: {self.collection_name}")
             else:
                 logger.info(f"Colección Qdrant existente: {self.collection_name}")
-        
+
         except Exception as e:
             logger.error(f"Error inicializando colección Qdrant: {e}")
             raise
-    
+
     def _embed_text(self, text: str) -> List[float]:
         """
         Genera embedding para texto
@@ -176,7 +176,7 @@ class VectorDB:
         if self._embedder is not None:
             # Usar embedder real cuando esté disponible
             return self._embedder.encode(text)
-        
+
         # Embedding dummy para testing (hash determinístico)
         if not NUMPY_AVAILABLE:
             # Fallback sin numpy
@@ -190,7 +190,7 @@ class VectorDB:
             while len(embedding) < self.embedding_dim:
                 embedding.append(0.0)
             return embedding[:self.embedding_dim]
-        
+
         # Con numpy (mejor performance)
         np.random.seed(int(hashlib.md5(text.encode()).hexdigest(), 16) % (2**32))
         embedding = np.random.randn(self.embedding_dim)
@@ -199,7 +199,7 @@ class VectorDB:
         if norm > 0:
             embedding = embedding / norm
         return embedding.tolist()
-    
+
     def add_documents(
         self,
         documents: List[Dict[str, Any]],
@@ -225,32 +225,32 @@ class VectorDB:
         if not documents:
             logger.warning("add_documents: lista de documentos vacía")
             return 0
-        
+
         try:
             if self.backend == "qdrant":
                 return self._add_documents_qdrant(documents, batch_size)
             elif self.backend == "chroma":
                 return self._add_documents_chroma(documents, batch_size)
-        
+
         except Exception as e:
             logger.error(f"Error añadiendo documentos: {e}")
             raise
-    
+
     def _add_documents_qdrant(self, documents: List[Dict], batch_size: int) -> int:
         """Añade documentos a Qdrant"""
         points = []
-        
+
         for idx, doc in enumerate(documents):
             text = doc.get("text", "")
             metadata = doc.get("metadata", {})
-            
+
             if not text:
                 logger.warning(f"Documento {idx} sin texto, omitiendo")
                 continue
-            
+
             # Generar embedding
             embedding = self._embed_text(text)
-            
+
             # Crear point
             point = PointStruct(
                 id=idx,  # En producción usar UUID
@@ -262,7 +262,7 @@ class VectorDB:
                 }
             )
             points.append(point)
-            
+
             # Insertar en batches
             if len(points) >= batch_size:
                 self.client.upsert(
@@ -270,38 +270,38 @@ class VectorDB:
                     points=points
                 )
                 points = []
-        
+
         # Insertar restantes
         if points:
             self.client.upsert(
                 collection_name=self.collection_name,
                 points=points
             )
-        
+
         logger.info(f"Añadidos {len(documents)} documentos a Qdrant")
         return len(documents)
-    
+
     def _add_documents_chroma(self, documents: List[Dict], batch_size: int) -> int:
         """Añade documentos a ChromaDB"""
         ids = []
         embeddings = []
         texts = []
         metadatas = []
-        
+
         for idx, doc in enumerate(documents):
             text = doc.get("text", "")
             metadata = doc.get("metadata", {})
-            
+
             if not text:
                 logger.warning(f"Documento {idx} sin texto, omitiendo")
                 continue
-            
+
             # Generar ID único
             doc_id = f"doc_{idx}_{datetime.now().timestamp()}"
-            
+
             # Generar embedding
             embedding = self._embed_text(text)
-            
+
             ids.append(doc_id)
             embeddings.append(embedding)
             texts.append(text)
@@ -309,24 +309,24 @@ class VectorDB:
                 **metadata,
                 "timestamp": datetime.now().isoformat()
             })
-        
+
         # Añadir en batches
         for i in range(0, len(ids), batch_size):
             batch_ids = ids[i:i+batch_size]
             batch_embeddings = embeddings[i:i+batch_size]
             batch_texts = texts[i:i+batch_size]
             batch_metadatas = metadatas[i:i+batch_size]
-            
+
             self.collection.add(
                 ids=batch_ids,
                 embeddings=batch_embeddings,
                 documents=batch_texts,
                 metadatas=batch_metadatas
             )
-        
+
         logger.info(f"Añadidos {len(ids)} documentos a ChromaDB")
         return len(ids)
-    
+
     def search(
         self,
         query: str,
@@ -353,16 +353,16 @@ class VectorDB:
         try:
             # Generar embedding de query
             query_embedding = self._embed_text(query)
-            
+
             if self.backend == "qdrant":
                 return self._search_qdrant(query_embedding, top_k, filter_metadata)
             elif self.backend == "chroma":
                 return self._search_chroma(query_embedding, top_k, filter_metadata)
-        
+
         except Exception as e:
             logger.error(f"Error en búsqueda: {e}")
             return []
-    
+
     def _search_qdrant(
         self,
         query_embedding: List[float],
@@ -376,7 +376,7 @@ class VectorDB:
             query_vector=query_embedding,
             limit=top_k
         )
-        
+
         results = []
         for hit in search_result:
             results.append({
@@ -385,9 +385,9 @@ class VectorDB:
                 "metadata": hit.payload.get("metadata", {}),
                 "timestamp": hit.payload.get("timestamp")
             })
-        
+
         return results
-    
+
     def _search_chroma(
         self,
         query_embedding: List[float],
@@ -400,23 +400,23 @@ class VectorDB:
             query_embeddings=[query_embedding],
             n_results=top_k
         )
-        
+
         results = []
         if search_result["documents"] and search_result["documents"][0]:
             for idx, doc in enumerate(search_result["documents"][0]):
                 # ChromaDB usa distance, convertir a similarity score
                 distance = search_result["distances"][0][idx] if search_result["distances"] else 0.0
                 score = 1.0 - distance  # Aproximado para cosine
-                
+
                 results.append({
                     "text": doc,
                     "score": score,
                     "metadata": search_result["metadatas"][0][idx] if search_result["metadatas"] else {},
                     "id": search_result["ids"][0][idx]
                 })
-        
+
         return results
-    
+
     def delete_collection(self):
         """Elimina la colección completa (usar con precaución)"""
         try:
@@ -426,11 +426,11 @@ class VectorDB:
             elif self.backend == "chroma":
                 self.client.delete_collection(name=self.collection_name)
                 logger.info(f"Colección ChromaDB eliminada: {self.collection_name}")
-        
+
         except Exception as e:
             logger.error(f"Error eliminando colección: {e}")
             raise
-    
+
     def get_stats(self) -> Dict:
         """
         Obtiene estadísticas de la base de datos
@@ -444,14 +444,14 @@ class VectorDB:
                 count = collection_info.points_count
             elif self.backend == "chroma":
                 count = self.collection.count()
-            
+
             return {
                 "count": count,
                 "backend": self.backend,
                 "collection": self.collection_name,
                 "embedding_dim": self.embedding_dim
             }
-        
+
         except Exception as e:
             logger.error(f"Error obteniendo stats: {e}")
             return {"count": 0, "backend": self.backend, "collection": self.collection_name}
@@ -476,12 +476,12 @@ def get_vector_db(
         Instancia singleton de VectorDB
     """
     global _vector_db_instance
-    
+
     if _vector_db_instance is None:
         # Leer de variable de entorno si no se especifica
         if backend is None:
             backend = os.getenv("VECTOR_DB_BACKEND", "qdrant")
-        
+
         _vector_db_instance = VectorDB(backend=backend, **kwargs)
-    
+
     return _vector_db_instance

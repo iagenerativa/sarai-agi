@@ -32,6 +32,19 @@ import numpy as np
 import pytest
 import yaml
 
+# Import our modules (moved from later in file to fix E402)
+from sarai_agi.model.wrapper import (
+    CascadeWrapper,
+    EmbeddingModelWrapper,
+    GGUFModelWrapper,
+    ModelRegistry,
+    OllamaModelWrapper,
+    OpenAIAPIWrapper,
+    TransformersModelWrapper,
+    get_cascade_wrapper,
+    get_model,
+    list_available_models,
+)
 
 # Create real-enough Runnable base class for CascadeWrapper inheritance
 class MockRunnable:
@@ -50,19 +63,7 @@ sys.modules['langchain_core.runnables'] = mock_langchain.runnables
 sys.modules['langchain_core.messages'] = mock_langchain.messages
 sys.modules['langchain_core.output_parsers'] = mock_langchain.output_parsers
 
-# Import our modules
-from sarai_agi.model.wrapper import (
-    CascadeWrapper,
-    EmbeddingModelWrapper,
-    GGUFModelWrapper,
-    ModelRegistry,
-    OllamaModelWrapper,
-    OpenAIAPIWrapper,
-    TransformersModelWrapper,
-    get_cascade_wrapper,
-    get_model,
-    list_available_models,
-)
+# Imports moved to top of file to fix E402
 
 # ============================================================================
 # FIXTURES

@@ -535,6 +535,6 @@ def get_confidence_router() -> ConfidenceRouter:
     >>> decision = router.should_escalate("Test", "Response")
     """
     if not hasattr(get_confidence_router, '_router_instance'):
-        get_confidence_router._router_instance = ConfidenceRouter()
+        get_confidence_router._router_instance = ConfidenceRouter()  # type: ignore[attr-defined]
 
-    return get_confidence_router._router_instance
+    return get_confidence_router._router_instance  # type: ignore[attr-defined]
