@@ -12,10 +12,123 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 - **Sistema de configuración** (`src/sarai_agi/configuration.py`): Carga YAML con alias bilingües
 - **Test suite completo**: 11 pruebas (pipeline routing, quantization, config integrity)
 
-### Migrated from SARAi_v2
-- Pipeline paralela v3.5.1 (desacoplada de dependencias legacy)
-- Selector de cuantización con historial EMA y scoring multi-factor
-- Estructura de proyecto lista para GitHub con SemVer + CHANGELOG
+# Changelog
+
+Todos los cambios notables de este proyecto serán documentados en este archivo.
+
+El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
+y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.5.1] - 2025-11-03
+
+### ✅ Migrado desde SARAi_v2
+
+#### Pipeline Paralela (379 LOC)
+- `src/sarai_agi/pipeline/parallel.py`
+- Async orchestration con ThreadPoolExecutor
+- Routing por emotion/complexity scores
+- Dependency injection pattern
+- Tests: 8 passing
+
+#### Quantización Dinámica (325 LOC)
+- `src/sarai_agi/model/quantization_selector.py`
+- Selector multi-factor (IQ3_XXS/Q4_K_M/Q5_K_M)
+- EMA history tracking con psutil RAM detection
+- Heuristic scoring engine
+- Tests: 3 passing
+
+#### TRM Classifier (515 LOC)
+- `src/sarai_agi/classifier/trm.py`
+- Arquitectura recursiva TinyRecursiveLayer
+- Dual classification (hard/soft/web_query)
+- Checkpoint save/load con PyTorch
+- Simulated fallback sin torch
+- Tests: 11 passing (neural + simulated)
+
+#### MCP (Meta Control Plane) (738 LOC)
+- `src/sarai_agi/mcp/core.py`: MCP, MCPRules, MCPLearned
+- `src/sarai_agi/mcp/skills.py`: route_to_skills para MoE
+- Dual mode: rules-based → learned tras feedback
+- Semantic cache con Vector Quantization
+- Atomic reload con RLock para zero-downtime
+- Tests: 13 passing
+
+#### Configuración (85 LOC)
+- `src/sarai_agi/configuration.py`
+- YAML loader con alias bilingües (es/en)
+- Graceful fallback a defaults
+
+#### Infraestructura
+- `pyproject.toml`: Modern Python packaging
+- `.github/workflows/ci.yml`: Multi-Python matrix CI/CD
+- `CONTRIBUTING.md`: 623 LOC guía completa
+- `GITHUB_SETUP.md`: Instrucciones de publicación
+
+### 📊 Estadísticas de Migración
+
+- **Total LOC migradas**: ~2,040 LOC Python
+- **Tests**: 35/35 passing (100%)
+- **Commits**: 3 (initial setup, TRM+MCP, fixes)
+- **Coverage**: Config, Pipeline, Quantization, TRM, MCP
+
+### ⏳ Pendiente de Migración
+
+Componentes esenciales restantes (estimado ~3,500 LOC):
+
+1. **Model Pool** (~800 LOC)
+   - Cache LRU/TTL con swapping automático
+   - Hot/warm/cold state detection
+   - Backend abstraction (GGUF/Transformers)
+
+2. **Emotional Context Engine** (~370 LOC)
+   - 16 emotion detection
+   - 8 cultural adaptations
+   - Voice modulation
+
+3. **Advanced Telemetry** (~310 LOC)
+   - Prometheus metrics
+   - System monitoring (30s interval)
+   - Auto-alerting
+
+4. **Security & Resilience** (~425 LOC)
+   - Threat detection (SQL injection, XSS, DoS)
+   - Input sanitization
+   - Auto-fallback por recursos
+
+5. **Supporting Systems**
+   - Streaming TTS (~120 LOC)
+   - Shared TTS Cache (~300 LOC)
+   - Predictive Confirmation (~290 LOC)
+   - Log Compression scripts
+
+6. **Integration Layer**
+   - sarai_advanced_integrator.py (~280 LOC)
+   - 4 operational modes (BASIC/ADVANCED/SECURE/ENTERPRISE)
+
+## [3.5.1-beta] - 2025-11-03
+
+### Added
+- Initial project structure
+- Configuration system with bilingual YAML support
+- Async pipeline orchestration
+- Dynamic quantization selector
+- Test suite foundation
+
+### Changed
+- N/A (initial release)
+
+### Deprecated
+- N/A
+
+### Removed
+- N/A
+
+### Fixed
+- N/A
+
+### Security
+- No known issues
+
 
 ### Infrastructure
 - Documentación completa en español (ARCHITECTURE_OVERVIEW, MIGRATION_PLAN, ROADMAP)
