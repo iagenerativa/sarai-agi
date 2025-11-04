@@ -14,6 +14,16 @@ search_integration:
     cache_ttl_seconds: 300
     consensus_threshold: 0.7
     
+    # SearXNG Integration (v3.8.0)
+    searxng:
+      enabled: true  # Set to false to use mock searches
+      url: "http://localhost:8888"
+      timeout: 5  # seconds
+      max_retries: 2
+      fallback_to_mock: true  # If SearXNG fails, use mock as fallback
+      language: "es-ES"
+      safe_search: 0  # 0=off, 1=moderate, 2=strict
+    
   search_strategies:
     expert_deep:
       description: "Consultas complejas, máximo rigor"

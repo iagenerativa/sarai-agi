@@ -14,6 +14,14 @@ import logging
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("aiohttp not available - SearXNG integration will use fallback mode")
+
 logger = logging.getLogger(__name__)
 
 
@@ -100,6 +108,14 @@ class MultiSourceSearcher:
         self.consensus_threshold = self.config.get("consensus_threshold", 0.7)
         self.parallel_enabled = self.config.get("parallel_search", True)
         
+        # SearXNG configuration
+        searxng_config = self.config.get("searxng", {})
+        self.searxng_enabled = searxng_config.get("enabled", True) and AIOHTTP_AVAILABLE
+        self.searxng_url = searxng_config.get("url", "http://localhost:8888")
+        self.searxng_timeout = searxng_config.get("timeout", 5)
+        self.searxng_max_retries = searxng_config.get("max_retries", 2)
+        self.fallback_to_mock = searxng_config.get("fallback_to_mock", True)
+        
         # Fuentes predefinidas con pesos de credibilidad
         self.search_sources = self._initialize_sources(config)
         
@@ -108,7 +124,8 @@ class MultiSourceSearcher:
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
         
         logger.info(f"MultiSourceSearcher initialized: {self.max_sources} sources, "
-                   f"verification={self.verification_level.name}")
+                   f"verification={self.verification_level.name}, "
+                   f"SearXNG={'enabled' if self.searxng_enabled else 'disabled (fallback to mock)'}")
     
     def _initialize_sources(self, config: Dict[str, Any]) -> List[SearchSource]:
         """Inicializa fuentes de búsqueda con configuración"""
@@ -291,13 +308,117 @@ class MultiSourceSearcher:
         return valid_results
     
     async def search_single_source(self, source: SearchSource, query: str) -> Optional[SearchResult]:
-        """Búsqueda en una fuente individual"""
+        """Búsqueda en una fuente individual usando SearXNG"""
+        if self.searxng_enabled:
+            return await self._search_with_searxng(source, query)
+        else:
+            return await self._search_mock(source, query)
+    
+    async def _search_with_searxng(self, source: SearchSource, query: str) -> Optional[SearchResult]:
+        """Búsqueda real usando SearXNG"""
         try:
-            # PLACEHOLDER: Aquí integrarías con SearXNG o APIs específicas
-            # Por ahora, simulación de resultado
-            logger.debug(f"Searching {source.name} for: {query[:30]}...")
+            # Mapear source a categoría SearXNG
+            category = self._map_source_to_category(source)
             
-            # Simulación de búsqueda exitosa
+            # Parámetros de búsqueda
+            params = {
+                "q": query,
+                "categories": category,
+                "format": "json",
+                "language": "es-ES"
+            }
+            
+            # Realizar búsqueda con retry logic
+            for attempt in range(self.searxng_max_retries):
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        timeout = aiohttp.ClientTimeout(total=self.searxng_timeout)
+                        async with session.get(
+                            f"{self.searxng_url}/search",
+                            params=params,
+                            timeout=timeout
+                        ) as response:
+                            if response.status != 200:
+                                logger.warning(f"SearXNG returned status {response.status} for {source.name}")
+                                continue
+                            
+                            data = await response.json()
+                            results = data.get("results", [])
+                            infoboxes = data.get("infoboxes", [])
+                            
+                            # Si no hay results pero sí infoboxes, usar info de infobox
+                            if not results and infoboxes:
+                                # Usar primer infobox como resultado
+                                infobox = infoboxes[0]
+                                logger.debug(f"SearXNG: No results, using infobox for {source.name}")
+                                
+                                return SearchResult(
+                                    source=source,
+                                    content=infobox.get("content", infobox.get("infobox", "")),
+                                    relevance_score=0.8,  # Alta relevancia para infoboxes de Wikipedia
+                                    timestamp=datetime.now().isoformat(),
+                                    metadata={
+                                        "query": query,
+                                        "source_name": source.name,
+                                        "search_method": "searxng",
+                                        "engine": infobox.get("engine", "wikipedia"),
+                                        "url": infobox.get("id") or (infobox.get("urls", [{}])[0].get("url") if infobox.get("urls") else ""),
+                                        "title": infobox.get("infobox", ""),
+                                        "type": "infobox",
+                                        "num_results": len(infoboxes)
+                                    },
+                                    citations=[
+                                        infobox.get("id") or (infobox.get("urls", [{}])[0].get("url") if infobox.get("urls") else f"{source.url_pattern}/search?q={query}")
+                                    ]
+                                )
+                            
+                            if not results:
+                                logger.debug(f"No results or infoboxes from SearXNG for {source.name}")
+                                return await self._search_mock(source, query) if self.fallback_to_mock else None
+                            
+                            # Tomar top result con mejor score
+                            top_result = max(results, key=lambda r: r.get("score", 0))
+                            
+                            logger.debug(f"SearXNG found {len(results)} results for {source.name}")
+                            
+                            return SearchResult(
+                                source=source,
+                                content=top_result.get("content", top_result.get("title", "")),
+                                relevance_score=min(top_result.get("score", 0.5), 1.0),  # Normalizar a [0,1]
+                                timestamp=datetime.now().isoformat(),
+                                metadata={
+                                    "query": query,
+                                    "source_name": source.name,
+                                    "search_method": "searxng",
+                                    "engine": top_result.get("engine"),
+                                    "url": top_result.get("url"),
+                                    "title": top_result.get("title"),
+                                    "num_results": len(results)
+                                },
+                                citations=[top_result.get("url", f"{source.url_pattern}/search?q={query}")]
+                            )
+                
+                except asyncio.TimeoutError:
+                    logger.warning(f"SearXNG timeout for {source.name} (attempt {attempt + 1}/{self.searxng_max_retries})")
+                    if attempt == self.searxng_max_retries - 1:
+                        break
+                except Exception as e:
+                    logger.error(f"SearXNG error for {source.name}: {e}")
+                    break
+            
+            # Fallback a mock si todas las retries fallan
+            return await self._search_mock(source, query) if self.fallback_to_mock else None
+        
+        except Exception as e:
+            logger.error(f"Unexpected error in SearXNG search for {source.name}: {e}")
+            return await self._search_mock(source, query) if self.fallback_to_mock else None
+    
+    async def _search_mock(self, source: SearchSource, query: str) -> SearchResult:
+        """Búsqueda mock como fallback (mantiene comportamiento original)"""
+        try:
+            logger.debug(f"Using MOCK search for {source.name}: {query[:30]}...")
+            
+            # Simulación de búsqueda exitosa (código original)
             result = SearchResult(
                 source=source,
                 content=f"[Mock] Results from {source.name} for '{query}'",
@@ -314,8 +435,22 @@ class MultiSourceSearcher:
             return result
         
         except Exception as e:
-            logger.error(f"Search failed for {source.name}: {e}")
+            logger.error(f"Mock search failed for {source.name}: {e}")
             return None
+    
+    def _map_source_to_category(self, source: SearchSource) -> str:
+        """Mapear SearchSource a categoría SearXNG"""
+        # Mapeo de fuentes a categorías SearXNG
+        # Ver: https://docs.searxng.org/user/configured_engines.html#configured-engines
+        mapping = {
+            "academic_papers": "science",
+            "news_agencies": "news",
+            "technical_docs": "it",
+            "industry_reports": "general",
+            "wikipedia": "general",
+            "stackoverflow": "it",
+        }
+        return mapping.get(source.name, "general")
     
     async def cross_verify_sources(self, search_results: List[SearchResult]) -> VerifiedInformation:
         """Verificación cruzada de resultados mediante consensus scoring"""
