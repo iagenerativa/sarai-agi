@@ -7,7 +7,6 @@ title: SARAi_AGI
 Bienvenido a la documentación de SARAi_AGI.
 
 - Repositorio: https://github.com/iagenerativa/sarai-agi
-- Resumen de migración: [MIGRATION_COMPLETE_v3.5.1.md](../MIGRATION_COMPLETE_v3.5.1.md)
 
 ## Documentos clave
 

@@ -35,8 +35,9 @@ jobs:
         pytest --cov=src --cov-report=xml --cov-report=term
     
     - name: Upload coverage to Codecov (if token present)
-      if: matrix.python-version == '3.10' && secrets.CODECOV_TOKEN != ''
+      if: matrix.python-version == '3.10'
       uses: codecov/codecov-action@v4
+      continue-on-error: true
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
