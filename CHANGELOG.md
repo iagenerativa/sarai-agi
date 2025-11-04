@@ -4,6 +4,17 @@ Todos los cambios notables de este repositorio se documentarán en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/) y este proyecto adhiere a [SemVer 2.0](https://semver.org/).
 
+## [3.5.2] - 2025-11-04
+
+### Fixed
+- **Workflows CI/CD**: Corregidos errores de linting (ruff y mypy)
+- **Docs workflow**: Eliminado enlace roto a MIGRATION_COMPLETE_v3.5.1.md
+- **CI workflow**: Corregida expresión inválida con secrets.CODECOV_TOKEN
+- **Code quality**: Eliminado trailing whitespace, corregidos bare except, tipos Optional
+
+### Added
+- **Docs**: Footer con licencia CC BY-NC-SA 4.0 en sitio de documentación
+
 ## [3.5.1] - 2025-11-04
 
 ### Added - Migración Base Completa
