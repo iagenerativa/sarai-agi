@@ -311,7 +311,7 @@ You are a helpful vision assistant that analyzes images accurately.<|im_end|>
             question="Describe this technical diagram in detail. "
                      "Identify components, connections, and data flow."
         )
-        return result["text"]
+        return str(result["text"])  # type: ignore[no-any-return]
 
     def extract_text_ocr(self, image_path: str) -> str:
         """
@@ -338,7 +338,7 @@ You are a helpful vision assistant that analyzes images accurately.<|im_end|>
             question="Extract all visible text from this image. "
                      "Preserve formatting and structure."
         )
-        return result["text"]
+        return str(result["text"])  # type: ignore[no-any-return]
 
 
 def create_vision_agent(model_pool) -> VisionAgent:

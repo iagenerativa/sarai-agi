@@ -203,7 +203,7 @@ class UnifiedModelWrapper(Runnable):
     # LangChain Runnable Interface
     # ------------------------------------------------------------------------
 
-    def invoke(self, input: InputType, config: Optional[Dict] = None) -> OutputType:
+    def invoke(self, input: InputType, config: Optional[Dict] = None) -> OutputType:  # type: ignore[override]
         """
         Execute model synchronously (LangChain interface).
 
@@ -233,7 +233,7 @@ class UnifiedModelWrapper(Runnable):
             logger.error(f"Error invoking {self.name}: {e}")
             raise RuntimeError(f"Model invocation failed for {self.name}") from e
 
-    async def ainvoke(self, input: InputType, config: Optional[Dict] = None) -> OutputType:
+    async def ainvoke(self, input: InputType, config: Optional[Dict] = None) -> OutputType:  # type: ignore[override]
         """
         Execute model asynchronously (LangChain interface).
 
@@ -244,7 +244,7 @@ class UnifiedModelWrapper(Runnable):
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(None, self.invoke, input, config)
 
-    def stream(self, input: InputType, config: Optional[Dict] = None) -> Iterator[str]:
+    def stream(self, input: InputType, config: Optional[Dict] = None) -> Iterator[str]:  # type: ignore[override]
         """
         Stream tokens (if backend supports it).
 
@@ -252,7 +252,7 @@ class UnifiedModelWrapper(Runnable):
         Specific backends can override for true streaming.
         """
         response = self.invoke(input, config)
-        yield response
+        yield str(response)  # type: ignore[misc]
 
     # ------------------------------------------------------------------------
     # Model Lifecycle Management
@@ -361,7 +361,7 @@ class GGUFModelWrapper(UnifiedModelWrapper):
 
         # Load configuration
         n_ctx = self.config.get("n_ctx", 2048)
-        n_threads = self.config.get("n_threads", os.cpu_count() - 2)
+        n_threads = self.config.get("n_threads", (os.cpu_count() or 4) - 2)
         use_mmap = self.config.get("use_mmap", True)
         use_mlock = self.config.get("use_mlock", False)
 
@@ -396,6 +396,8 @@ class GGUFModelWrapper(UnifiedModelWrapper):
         max_tokens = max_tokens or self.config.get("max_tokens", 512)
 
         # Generate
+        if self.model is None:
+            raise RuntimeError("Model not loaded")
         response = self.model(
             prompt,
             max_tokens=max_tokens,
@@ -404,7 +406,7 @@ class GGUFModelWrapper(UnifiedModelWrapper):
             echo=False
         )
 
-        return response["choices"][0]["text"].strip()
+        return str(response["choices"][0]["text"]).strip()  # type: ignore[no-any-return]
 
 
 # ============================================================================
@@ -472,6 +474,8 @@ class TransformersModelWrapper(UnifiedModelWrapper):
         inputs = self.tokenizer(prompt, return_tensors="pt")
 
         # Move to model device
+        if self.model is None:
+            raise RuntimeError("Model not loaded")
         inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
         # Generation parameters
@@ -496,7 +500,7 @@ class TransformersModelWrapper(UnifiedModelWrapper):
         # Remove prompt from output
         response = response[len(prompt):].strip()
 
-        return response
+        return str(response)  # type: ignore[no-any-return]
 
 
 # ============================================================================

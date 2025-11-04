@@ -134,9 +134,9 @@ if HAS_TORCH:
 
             if self.training:
                 return {
-                    "hard": hard_score,
-                    "soft": soft_score,
-                    "web_query": web_query_score,
+                    "hard": float(hard_score.item()),
+                    "soft": float(soft_score.item()),
+                    "web_query": float(web_query_score.item()),
                 }
             else:
                 # En eval mode retornar scalars para batch size 1, tensors para batches
@@ -148,9 +148,9 @@ if HAS_TORCH:
                     }
                 else:
                     return {
-                        "hard": hard_score.detach().cpu().tolist(),
-                        "soft": soft_score.detach().cpu().tolist(),
-                        "web_query": web_query_score.detach().cpu().tolist(),
+                        "hard": float(hard_score.detach().cpu().tolist()[0]),
+                        "soft": float(soft_score.detach().cpu().tolist()[0]),
+                        "web_query": float(web_query_score.detach().cpu().tolist()[0]),
                     }
 
         def save_checkpoint(self, path: Path) -> None:

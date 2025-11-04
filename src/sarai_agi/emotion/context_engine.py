@@ -638,15 +638,16 @@ class EmotionalContextEngine:
             profile.interaction_history = profile.interaction_history[-20:]
 
         # Update dominant emotion (last 10 interactions)
-        emotion_counts = defaultdict(int)
+        emotion_counts: defaultdict[str, int] = defaultdict(int)
         for emo, _ in profile.interaction_history[-10:]:
-            emotion_counts[emo] += 1
+            emotion_counts[emo] += 1  # type: ignore[arg-type,index]
 
         if emotion_counts:
-            profile.dominant_emotion = max(
+            dominant_emotion_str = max(
                 emotion_counts.items(),
                 key=lambda x: x[1]
             )[0]
+            profile.dominant_emotion = dominant_emotion_str  # type: ignore[assignment]
 
     def get_emotional_insights(self) -> Dict[str, Any]:
         """

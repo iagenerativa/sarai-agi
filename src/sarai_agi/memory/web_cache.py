@@ -35,9 +35,9 @@ except ImportError:
     requests = None
 
 try:
-    from diskcache import Cache
+    from diskcache import Cache  # type: ignore[import]
 except ImportError:
-    Cache = None
+    Cache = None  # type: ignore[assignment,misc]
 
 # Safe Mode check - adaptado para sarai-agi
 # En SARAi_v2 está en core.audit, aquí lo importamos del módulo de seguridad
@@ -164,7 +164,7 @@ class WebCache:
                 if age < ttl:
                     logger.info(f"Cache HIT: '{query[:60]}...' (age: {age:.1f}s)")
                     cached_result["source"] = "cache"
-                    return cached_result
+                    return cached_result  # type: ignore[no-any-return]
                 else:
                     logger.info(f"Cache EXPIRED: '{query[:60]}...' (age: {age:.1f}s > {ttl}s)")
 

@@ -537,4 +537,4 @@ def get_confidence_router() -> ConfidenceRouter:
     if not hasattr(get_confidence_router, '_router_instance'):
         get_confidence_router._router_instance = ConfidenceRouter()  # type: ignore[attr-defined]
 
-    return get_confidence_router._router_instance  # type: ignore[attr-defined]
+    return get_confidence_router._router_instance  # type: ignore[attr-defined,no-any-return]

@@ -63,7 +63,7 @@ class MCPCache:
 
         # Cuantizar
         emb_quant = (emb_norm * (self.quant_levels - 1)).astype(np.uint8)
-        return np.clip(emb_quant, 0, self.quant_levels - 1)
+        return np.clip(emb_quant, 0, self.quant_levels - 1)  # type: ignore[no-any-return]
 
     def get(self, context: str) -> Optional[Tuple[float, float]]:
         """Busca en cache por similitud semántica."""
@@ -291,7 +291,7 @@ class MCP:
         self.rules_mcp = MCPRules(self.config, embedder)
 
         if HAS_TORCH:
-            self.learned_mcp = MCPLearned(self.config)
+            self.learned_mcp: Optional[MCPLearned] = MCPLearned(self.config)
 
             # Intentar cargar checkpoint
             checkpoint_path = Path("models") / "mcp" / "checkpoint.pt"
@@ -354,7 +354,16 @@ class MCP:
                 urgency
             ], dtype=torch.float32)
 
-            alpha, beta = self.learned_mcp(features)
+            if self.learned_mcp is not None:
+                alpha, beta = self.learned_mcp(features)
+            else:
+                # Fallback to rules if learned MCP is None
+                alpha, beta = self.rules_mcp.compute_weights(
+                    hard,
+                    soft_score,
+                    context=context_param,
+                    feedback_buffer=active_buffer
+                )
         else:
             alpha, beta = self.rules_mcp.compute_weights(
                 hard,

@@ -1,0 +1,16 @@
+src/sarai_agi/__init__.py
+src/sarai_agi/configuration.py
+src/sarai_agi/cascade/__init__.py
+src/sarai_agi/cascade/confidence_router.py
+src/sarai_agi/cascade/think_mode_classifier.py
+src/sarai_agi/classifier/__init__.py
+src/sarai_agi/classifier/trm.py
+src/sarai_agi/emotion/__init__.py
+src/sarai_agi/emotion/context_engine.py
+src/sarai_agi/mcp/__init__.py
+src/sarai_agi/mcp/core.py
+src/sarai_agi/mcp/skills.py
+src/sarai_agi/pipeline/__init__.py
+src/sarai_agi/pipeline/parallel.py
+src/sarai_agi/agents/specialized/code_expert.py
+src/sarai_agi/agents/specialized/vision.py

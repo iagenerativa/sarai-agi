@@ -193,7 +193,7 @@ Code:
 
                 if validation["valid"]:
                     print(f"[CodeExpert] ✅ Valid {validation['language']} code (attempt {attempt+1})")
-                    return code
+                    return str(code)  # type: ignore[no-any-return]
 
                 else:
                     # Retry with error feedback

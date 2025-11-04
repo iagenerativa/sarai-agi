@@ -246,4 +246,4 @@ def get_think_mode_classifier(model_pool=None) -> ThinkModeClassifier:
     if not hasattr(get_think_mode_classifier, '_classifier_instance'):
         get_think_mode_classifier._classifier_instance = ThinkModeClassifier(model_pool)  # type: ignore[attr-defined]
 
-    return get_think_mode_classifier._classifier_instance  # type: ignore[attr-defined]
+    return get_think_mode_classifier._classifier_instance  # type: ignore[attr-defined,no-any-return]

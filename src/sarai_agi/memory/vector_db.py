@@ -48,7 +48,7 @@ try:
     from qdrant_client.models import Distance, PointStruct, VectorParams
     QDRANT_AVAILABLE = True
 except ImportError:
-    QdrantClient = None
+    QdrantClient = None  # type: ignore[assignment,misc]
     QDRANT_AVAILABLE = False
 
 try:
@@ -56,7 +56,7 @@ try:
     from chromadb.config import Settings  # noqa: F401
     CHROMA_AVAILABLE = True
 except ImportError:
-    chromadb = None
+    chromadb = None  # type: ignore[assignment]
     CHROMA_AVAILABLE = False
 
 # Embedding model (placeholder - se integrará con Embedding Gemma)
@@ -64,7 +64,7 @@ try:
     import numpy as np
     NUMPY_AVAILABLE = True
 except ImportError:
-    np = None
+    np = None  # type: ignore[assignment]
     NUMPY_AVAILABLE = False
 
 
@@ -480,8 +480,9 @@ def get_vector_db(
     if _vector_db_instance is None:
         # Leer de variable de entorno si no se especifica
         if backend is None:
-            backend = os.getenv("VECTOR_DB_BACKEND", "qdrant")
+            backend_str = os.getenv("VECTOR_DB_BACKEND", "qdrant")
+            backend = backend_str  # type: ignore[assignment]
 
-        _vector_db_instance = VectorDB(backend=backend, **kwargs)
+        _vector_db_instance = VectorDB(backend=backend, **kwargs)  # type: ignore[arg-type]
 
     return _vector_db_instance
