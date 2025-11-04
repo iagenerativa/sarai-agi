@@ -141,7 +141,7 @@ class TestSystemHealthChecks:
         
         version = sys.version_info
         assert version.major == 3
-        assert version.minor >= 10, f"SARAi requiere Python 3.10+, encontrado {version.major}.{version.minor}"
+        assert version.minor >= 11, f"SARAi requiere Python 3.11+, encontrado {version.major}.{version.minor}"
         
     def test_required_stdlib_available(self):
         """Test que módulos estándar requeridos están disponibles"""
