@@ -108,13 +108,19 @@ class MultiSourceSearcher:
         self.consensus_threshold = self.config.get("consensus_threshold", 0.7)
         self.parallel_enabled = self.config.get("parallel_search", True)
         
-        # SearXNG configuration
+        # SearXNG configuration (STRICT MODE: 100% real, no mocks)
         searxng_config = self.config.get("searxng", {})
         self.searxng_enabled = searxng_config.get("enabled", True) and AIOHTTP_AVAILABLE
         self.searxng_url = searxng_config.get("url", "http://localhost:8888")
         self.searxng_timeout = searxng_config.get("timeout", 5)
         self.searxng_max_retries = searxng_config.get("max_retries", 2)
-        self.fallback_to_mock = searxng_config.get("fallback_to_mock", True)
+        self.fallback_to_mock = searxng_config.get("fallback_to_mock", False)  # Default: NO MOCKS
+        
+        # Warn if strict mode enabled
+        if self.searxng_enabled and not self.fallback_to_mock:
+            logger.info("⚠️ STRICT MODE: SearXNG required - System will return None if unavailable (no mock fallback)")
+        elif not self.searxng_enabled:
+            logger.warning("⚠️ SearXNG DISABLED: Searches will return None (mock fallback also disabled)")
         
         # Fuentes predefinidas con pesos de credibilidad
         self.search_sources = self._initialize_sources(config)
@@ -125,7 +131,7 @@ class MultiSourceSearcher:
         
         logger.info(f"MultiSourceSearcher initialized: {self.max_sources} sources, "
                    f"verification={self.verification_level.name}, "
-                   f"SearXNG={'enabled' if self.searxng_enabled else 'disabled (fallback to mock)'}")
+                   f"SearXNG={'STRICT MODE (100% real)' if self.searxng_enabled and not self.fallback_to_mock else 'disabled or fallback enabled'}")
     
     def _initialize_sources(self, config: Dict[str, Any]) -> List[SearchSource]:
         """Inicializa fuentes de búsqueda con configuración"""
@@ -308,11 +314,13 @@ class MultiSourceSearcher:
         return valid_results
     
     async def search_single_source(self, source: SearchSource, query: str) -> Optional[SearchResult]:
-        """Búsqueda en una fuente individual usando SearXNG"""
+        """Búsqueda en una fuente individual usando SearXNG (STRICT MODE: 100% real)"""
         if self.searxng_enabled:
             return await self._search_with_searxng(source, query)
         else:
-            return await self._search_mock(source, query)
+            # STRICT MODE: Si SearXNG está deshabilitado, retornar None (no mock)
+            logger.warning(f"SearXNG disabled - Cannot search {source.name} (STRICT MODE: no mock fallback)")
+            return None
     
     async def _search_with_searxng(self, source: SearchSource, query: str) -> Optional[SearchResult]:
         """Búsqueda real usando SearXNG"""
@@ -374,7 +382,11 @@ class MultiSourceSearcher:
                             
                             if not results:
                                 logger.debug(f"No results or infoboxes from SearXNG for {source.name}")
-                                return await self._search_mock(source, query) if self.fallback_to_mock else None
+                                if self.fallback_to_mock:
+                                    return await self._search_mock(source, query)
+                                else:
+                                    logger.warning(f"STRICT MODE: No SearXNG results for {source.name} - returning None")
+                                    return None
                             
                             # Tomar top result con mejor score
                             top_result = max(results, key=lambda r: r.get("score", 0))
@@ -406,15 +418,30 @@ class MultiSourceSearcher:
                     logger.error(f"SearXNG error for {source.name}: {e}")
                     break
             
-            # Fallback a mock si todas las retries fallan
-            return await self._search_mock(source, query) if self.fallback_to_mock else None
+            # STRICT MODE: Si todas las retries fallan, retornar None (no mock)
+            if self.fallback_to_mock:
+                return await self._search_mock(source, query)
+            else:
+                logger.error(f"STRICT MODE: SearXNG failed after {self.searxng_max_retries} retries for {source.name} - returning None")
+                return None
         
         except Exception as e:
             logger.error(f"Unexpected error in SearXNG search for {source.name}: {e}")
-            return await self._search_mock(source, query) if self.fallback_to_mock else None
+            if self.fallback_to_mock:
+                return await self._search_mock(source, query)
+            else:
+                logger.error(f"STRICT MODE: Unrecoverable error for {source.name} - returning None")
+                return None
     
     async def _search_mock(self, source: SearchSource, query: str) -> SearchResult:
-        """Búsqueda mock como fallback (mantiene comportamiento original)"""
+        """
+        Búsqueda mock como fallback (SOLO para backward compatibility)
+        
+        ⚠️ NOTA: En STRICT MODE (fallback_to_mock=false), este método NUNCA se llama.
+        Solo se usa si explícitamente se configura fallback_to_mock=true.
+        
+        RECOMENDACIÓN: Usar STRICT MODE para producción (100% datos reales).
+        """
         try:
             logger.debug(f"Using MOCK search for {source.name}: {query[:30]}...")
             

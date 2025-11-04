@@ -14,13 +14,13 @@ search_integration:
     cache_ttl_seconds: 300
     consensus_threshold: 0.7
     
-    # SearXNG Integration (v3.8.0)
+    # SearXNG Integration (v3.8.0) - 100% REAL (NO MOCKS)
     searxng:
-      enabled: true  # Set to false to use mock searches
+      enabled: true  # Set to false to disable real searches
       url: "http://localhost:8888"
       timeout: 5  # seconds
       max_retries: 2
-      fallback_to_mock: true  # If SearXNG fails, use mock as fallback
+      fallback_to_mock: false  # ⚠️ STRICT MODE: Fail if SearXNG unavailable (no mocks)
       language: "es-ES"
       safe_search: 0  # 0=off, 1=moderate, 2=strict
     
