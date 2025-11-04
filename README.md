@@ -2,8 +2,8 @@
 
 **Repository:** [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)  
 **Baseline version:** `v3.5.1`  
-**Migration status:** 76% completado (4,355 LOC core + 2,206 tests)  
-**Tests:** 159/162 passing (98.1%) - 3 skipped (known limitations documented)
+**Migration status:** 79% completado (4,955 LOC core + 2,666 tests)  
+**Tests:** 190/193 passing (98.4%) - 3 skipped (known limitations documented)
 
 > 📊 **[Ver Resumen Ejecutivo de Migración →](MIGRATION_STATUS.md)**
 
@@ -16,7 +16,7 @@ SARAi_AGI es el nuevo repositorio canónico para la evolución de SARAi hacia la
 - Preparar las iteraciones de v3.6.0 → v4.0 con documentación y planeación rigurosa.
 - Garantizar que cada versión tenga tag, changelog y paquete reproducible.
 
-## Componentes Migrados (8/15)
+## Componentes Migrados (9/15)
 
 ✅ **Configuration System** (85 LOC + 5 tests)  
 ✅ **Pipeline Paralela** (379 LOC + 8 tests)  
@@ -25,7 +25,8 @@ SARAi_AGI es el nuevo repositorio canónico para la evolución de SARAi hacia la
 ✅ **MCP Core** (515 LOC + 7 tests + 1 skills)  
 ✅ **Model Pool** (866 LOC + 38 tests)  
 ✅ **Emotional Context Engine** (650 LOC + 48 tests)  
-✅ **Security & Resilience System** (731 LOC + 38 tests) ⭐ **NUEVO**
+✅ **Security & Resilience System** (731 LOC + 38 tests)  
+✅ **Advanced Telemetry** (645 LOC + 31 tests) ⭐ **NUEVO**
 
 ## Estructura del repositorio
 
@@ -52,8 +53,11 @@ SARAi_AGI/
 │   ├── emotion/                  # Emotional Context (650 LOC)
 │   │   ├── context_engine.py    #   16 emotions, 8 cultures (618 LOC)
 │   │   └── __init__.py
-│   ├── security/                 # Security & Resilience (731 LOC) ⭐
+│   ├── security/                 # Security & Resilience (731 LOC)
 │   │   ├── resilience.py        #   Threat detection, auto-fallback
+│   │   └── __init__.py
+│   ├── telemetry/                # Advanced Telemetry (645 LOC) ⭐
+│   │   ├── monitoring.py        #   Prometheus metrics, auto-alerts
 │   │   └── __init__.py
 │   ├── classifier/               # TRM (515 LOC)
 │   └── mcp/                      # Meta Control (566 LOC)
@@ -65,7 +69,8 @@ SARAi_AGI/
     ├── test_mcp_core.py          # 7 tests
     ├── test_model_pool.py        # 38 tests
     ├── test_emotional_context.py # 48 tests
-    └── test_security_resilience.py # 38 tests ⭐
+    ├── test_security_resilience.py # 38 tests
+    └── test_advanced_telemetry.py # 31 tests ⭐
 ```
 
 ## Lineamientos de versionado
