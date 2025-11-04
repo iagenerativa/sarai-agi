@@ -1,19 +1,13 @@
-"""Modelos y utilidades de cuantización dinámica."""
+"""Módulo de modelos y gestión de quantización."""
 
-from .quantization import (
-    QuantizationLevel,
-    QuantizationMetadata,
-    QuantizationDecision,
+from .quantization_selector import (
     DynamicQuantizationSelector,
-    create_dynamic_quantization_selector,
-    load_quantization_config,
+    QuantizationDecision,
+    QuantizationLevel,
 )
 
 __all__ = [
-    "QuantizationLevel",
-    "QuantizationMetadata",
-    "QuantizationDecision",
     "DynamicQuantizationSelector",
-    "create_dynamic_quantization_selector",
-    "load_quantization_config",
+    "QuantizationDecision",
+    "QuantizationLevel",
 ]
