@@ -85,19 +85,22 @@ git push origin main --tags
 
 ---
 
-**DECISIÓN REQUERIDA**:
-- [ ] **Opción A**: Merge v3.7.0 ahora (con PLACEHOLDERs)
-- [ ] **Opción B**: Continuar a v3.8.0 (integraciones completas)
+**DECISIÓN TOMADA** ✅:
+- [ ] ~~**Opción A**: Merge v3.7.0 ahora (con PLACEHOLDERs)~~
+- [x] **Opción B**: Continuar a v3.8.0 (integraciones completas) ⭐ **SELECCIONADA**
 
-**Recomendación**: **Opción B** - mejor entregar v3.8.0 completo que v3.7.0 con limitaciones
+**Fecha decisión**: 4 de noviembre de 2025  
+**Roadmap completo**: Ver `ROADMAP_v3.8.0.md` (844 LOC)  
+**Próxima acción**: Integración SearXNG (Día 1-2, Nov 4-5)
 
 ---
 
 #### **HILO #2: PLACEHOLDER Integrations (v3.7.0 → v3.8.0)**
-**Estado**: 🔄 NO INICIADO  
-**Progreso**: 0/7 integraciones (0%)  
-**Bloqueador**: Decisión de merge (Hilo #1)  
+**Estado**: 🔄 EN PROGRESO (Semana 1/3 iniciada)  
+**Progreso**: 0/7 integraciones (0%) → **Target: 7/7 (100%) en 3 semanas**  
+**Bloqueador**: ~~Decisión de merge (Hilo #1)~~ ✅ RESUELTO  
 **Impacto**: Funcionalidad completa del sistema  
+**Roadmap**: Ver `ROADMAP_v3.8.0.md` para plan detallado  
 
 **Lista de PLACEHOLDERs**:
 
