@@ -1,6 +1,10 @@
 # SARAi_AGI
 
-**Baseline version:** `v3.5.1`
+**Baseline version:** `v3.5.1`  
+**Migration status:** 56% completado (4,485 LOC migrados)  
+**Tests:** 35/35 passing (100%)
+
+> 📊 **[Ver Resumen Ejecutivo de Migración →](MIGRATION_STATUS.md)**
 
 SARAi_AGI es el nuevo repositorio canónico para la evolución de SARAi hacia la versión 4.0 y posteriores. El objetivo es mantener un control de versiones claro, trazable y alineado con las prácticas de ingeniería modernas, evitando la confusión histórica que existía en `SARAi_v2`.
 
