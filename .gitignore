@@ -67,3 +67,6 @@ htmlcov/
 # Archivos temporales de sesión
 test_input.wav
 *.test.jsonl
+
+# MkDocs build output
+site/
