@@ -13,10 +13,10 @@ Características:
 
 Uso:
     from sarai_agi.memory.web_cache import WebCache
-    
+
     cache = WebCache(searxng_url="http://localhost:8888")
     results = cache.get("¿Cómo está el clima en Tokio?")
-    
+
     if results:
         for snippet in results["snippets"]:
             print(f"{snippet['title']}: {snippet['content'][:100]}...")
@@ -55,12 +55,12 @@ logger = logging.getLogger(__name__)
 class WebCache:
     """
     Cache persistente de búsquedas web con SearXNG local
-    
+
     Configuración recomendada:
     - SearXNG: docker run -d -p 8888:8080 searxng/searxng
     - TTL: 3600s (1h) para queries generales, 300s (5min) para time-sensitive
     - Max snippets: 5 (balance entre contexto y RAM)
-    
+
     Args:
         searxng_url: URL del servidor SearXNG (default: http://localhost:8888)
         cache_dir: Directorio para cache persistente (default: state/web_cache)
@@ -106,13 +106,13 @@ class WebCache:
     def _is_time_sensitive(self, query: str) -> bool:
         """
         Detecta si la query requiere datos recientes (TTL reducido)
-        
+
         Ejemplos time-sensitive:
         - "clima en Tokio"
         - "precio de Bitcoin"
         - "noticias de hoy"
         - "resultados del partido"
-        
+
         Returns:
             True si la query es time-sensitive (TTL 5min)
         """
@@ -128,10 +128,10 @@ class WebCache:
     def get(self, query: str) -> Optional[Dict]:
         """
         Obtiene resultados de búsqueda (cache o SearXNG)
-        
+
         Args:
             query: Query de búsqueda del usuario
-        
+
         Returns:
             {
                 "query": str,
@@ -247,7 +247,7 @@ class WebCache:
     def get_stats(self) -> Dict:
         """
         Obtiene estadísticas del cache
-        
+
         Returns:
             {
                 "size_bytes": int,
@@ -280,11 +280,11 @@ def get_web_cache(
 ) -> WebCache:
     """
     Factory function para obtener instancia singleton de WebCache
-    
+
     Args:
         searxng_url: URL de SearXNG (default desde env SEARXNG_URL o localhost)
         **kwargs: Argumentos adicionales para WebCache()
-    
+
     Returns:
         Instancia singleton de WebCache
     """
@@ -303,10 +303,10 @@ def get_web_cache(
 def cached_search(query: str) -> Optional[Dict]:
     """
     Convenience function para búsqueda con cache singleton
-    
+
     Args:
         query: Query de búsqueda
-    
+
     Returns:
         Resultados de búsqueda o None
     """

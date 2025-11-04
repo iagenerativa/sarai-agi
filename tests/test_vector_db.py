@@ -9,14 +9,14 @@ Suite de tests que valida:
 - Gestión de colecciones
 """
 
-import pytest
-import tempfile
 import os
+import tempfile
 from unittest.mock import Mock, patch
+
+import pytest
 
 # Import del módulo a testear
 from sarai_agi.memory.vector_db import VectorDB, get_vector_db
-
 
 # ============================================================================
 # FIXTURES

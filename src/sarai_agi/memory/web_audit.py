@@ -27,7 +27,7 @@ Formato de log web:
 
 Uso:
     from sarai_agi.memory.web_audit import get_web_audit_logger
-    
+
     logger = get_web_audit_logger()
     logger.log_web_query(
         query="¿Clima en Tokio?",
@@ -62,10 +62,10 @@ logger = logging.getLogger(__name__)
 class WebAuditLogger:
     """
     Logger de auditoría para búsquedas web con firma SHA-256
-    
+
     Cada línea del log se firma con SHA-256 para garantizar integridad.
     El sidecar .sha256 contiene los hashes línea por línea.
-    
+
     Args:
         log_dir: Directorio para logs (default: logs/)
         anomaly_threshold: Número de errores consecutivos que trigger Safe Mode
@@ -89,10 +89,10 @@ class WebAuditLogger:
     def _get_log_paths(self, log_type: str = "web") -> tuple:
         """
         Retorna (jsonl_path, hash_path) para el día actual
-        
+
         Args:
             log_type: "web" o "voice"
-        
+
         Returns:
             (jsonl_path, hash_path)
         """
@@ -119,7 +119,7 @@ class WebAuditLogger:
     ):
         """
         Registra una búsqueda web con firma SHA-256
-        
+
         Args:
             query: Query del usuario
             search_results: Output de web_cache.get()
@@ -185,7 +185,7 @@ class WebAuditLogger:
     ):
         """
         Registra una interacción de voz con firma HMAC-SHA256
-        
+
         Args:
             input_audio_hash: SHA-256 del audio de entrada
             detected_lang: Código de idioma detectado (ISO 639-1)
@@ -233,11 +233,11 @@ class WebAuditLogger:
     def verify_integrity(self, log_date: str, log_type: str = "web") -> bool:
         """
         Verifica la integridad de los logs de un día específico
-        
+
         Args:
             log_date: Fecha en formato YYYY-MM-DD
             log_type: "web" o "voice"
-        
+
         Returns:
             True si integridad OK, False si corrupción detectada
         """
@@ -296,10 +296,10 @@ class WebAuditLogger:
     def get_stats(self, days: int = 7) -> Dict:
         """
         Obtiene estadísticas de logs de los últimos N días
-        
+
         Args:
             days: Número de días hacia atrás
-        
+
         Returns:
             {
                 "total_web_queries": int,
@@ -358,10 +358,10 @@ _web_audit_logger_instance: Optional[WebAuditLogger] = None
 def get_web_audit_logger(log_dir: Optional[str] = None) -> WebAuditLogger:
     """
     Factory function para obtener instancia singleton de WebAuditLogger
-    
+
     Args:
         log_dir: Directorio de logs (default: logs/)
-    
+
     Returns:
         Instancia singleton de WebAuditLogger
     """

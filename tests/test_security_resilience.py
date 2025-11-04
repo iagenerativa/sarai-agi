@@ -168,12 +168,12 @@ class TestMaliciousInputDetector:
     def test_dos_attack_rate_limiting(self):
         """
         Test DOS attack detection (rate limiting).
-        
+
         NOTE: Current implementation has a design limitation:
         - deque maxlen=100 means we can never have >100 timestamps
         - But detection requires len(recent) > 100
         - This makes DOS detection impossible to trigger
-        
+
         TODO: Fix by either:
         1. Removing maxlen from deque, or
         2. Changing detection logic to check rate (requests/second)
@@ -294,10 +294,10 @@ class TestAutomaticFallbackSystem:
     def test_fallback_auto_reset(self):
         """
         Test fallback auto-reset after duration.
-        
+
         NOTE: This test requires waiting 4 seconds for auto-reset timer,
         making it slow for CI/CD pipelines. Skipped for fast test execution.
-        
+
         Manual verification:
         >>> fallback_system = AutomaticFallbackSystem()
         >>> fallback_system.activate_fallback("test", duration_minutes=0.05)
@@ -415,10 +415,10 @@ class TestSecurityResilienceSystem:
     def test_validate_input_security_dos_attack(self):
         """
         Test security validation with DOS attack.
-        
+
         NOTE: Current implementation has a design limitation.
         See test_dos_attack_rate_limiting for details.
-        
+
         TODO: Fix DOS detection logic and re-enable this test.
         """
         # system = SecurityResilienceSystem()

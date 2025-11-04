@@ -46,6 +46,7 @@ from sarai_agi.model.wrapper import (
     list_available_models,
 )
 
+
 # Create real-enough Runnable base class for CascadeWrapper inheritance
 class MockRunnable:
     """Mock Runnable that allows inheritance"""

@@ -14,30 +14,30 @@ Características:
 
 Uso:
     from sarai_agi.memory.vector_db import VectorDB
-    
+
     # Producción con Qdrant
     db = VectorDB(backend="qdrant", host="localhost", port=6333)
-    
+
     # Desarrollo con ChromaDB
     db = VectorDB(backend="chroma", persist_directory="state/chroma")
-    
+
     # Añadir documentos
     db.add_documents([
         {"text": "SARAi es una AGI local", "metadata": {"source": "docs"}},
         {"text": "El sistema usa modelos GGUF", "metadata": {"source": "docs"}}
     ])
-    
+
     # Búsqueda semántica
     results = db.search("¿Qué es SARAi?", top_k=5)
     for result in results:
         print(f"{result['text']} (score: {result['score']})")
 """
 
-import os
-import logging
-from typing import List, Dict, Optional, Any, Literal
-from datetime import datetime
 import hashlib
+import logging
+import os
+from datetime import datetime
+from typing import Any, Dict, List, Literal, Optional
 
 # Type hints
 Backend = Literal["qdrant", "chroma"]
@@ -45,7 +45,7 @@ Backend = Literal["qdrant", "chroma"]
 # Imports condicionales (dependencias opcionales)
 try:
     from qdrant_client import QdrantClient
-    from qdrant_client.models import Distance, VectorParams, PointStruct
+    from qdrant_client.models import Distance, PointStruct, VectorParams
     QDRANT_AVAILABLE = True
 except ImportError:
     QdrantClient = None
@@ -74,7 +74,7 @@ logger = logging.getLogger(__name__)
 class VectorDB:
     """
     Abstracción de base de datos vectorial con soporte para Qdrant y ChromaDB
-    
+
     Args:
         backend: "qdrant" o "chroma"
         host: Host del servidor (para Qdrant)
@@ -163,13 +163,13 @@ class VectorDB:
     def _embed_text(self, text: str) -> List[float]:
         """
         Genera embedding para texto
-        
+
         TODO: Integrar con Embedding Gemma
         Por ahora usa embedding dummy para testing
-        
+
         Args:
             text: Texto a embedder
-        
+
         Returns:
             Vector de embedding (lista de floats)
         """
@@ -183,7 +183,7 @@ class VectorDB:
             text_hash = hashlib.md5(text.encode()).hexdigest()
             # Convertir hash a vector de floats normalizados
             embedding = [
-                float(int(text_hash[i:i+2], 16)) / 255.0 
+                float(int(text_hash[i:i+2], 16)) / 255.0
                 for i in range(0, min(len(text_hash), self.embedding_dim * 2), 2)
             ]
             # Padding si es necesario
@@ -207,14 +207,14 @@ class VectorDB:
     ) -> int:
         """
         Añade documentos a la base de datos vectorial
-        
+
         Args:
             documents: Lista de dicts con keys 'text' y opcionalmente 'metadata'
             batch_size: Tamaño de lote para inserciones
-        
+
         Returns:
             Número de documentos añadidos
-        
+
         Example:
             docs = [
                 {"text": "SARAi es una AGI", "metadata": {"source": "docs"}},
@@ -335,16 +335,16 @@ class VectorDB:
     ) -> List[Dict]:
         """
         Búsqueda semántica en la base de datos vectorial
-        
+
         Args:
             query: Query de búsqueda en lenguaje natural
             top_k: Número de resultados a retornar
             filter_metadata: Filtros opcionales por metadata
-        
+
         Returns:
             Lista de resultados ordenados por similitud
             [{"text": str, "score": float, "metadata": dict}, ...]
-        
+
         Example:
             results = db.search("¿Qué es SARAi?", top_k=5)
             for result in results:
@@ -434,7 +434,7 @@ class VectorDB:
     def get_stats(self) -> Dict:
         """
         Obtiene estadísticas de la base de datos
-        
+
         Returns:
             {"count": int, "backend": str, "collection": str}
         """
@@ -467,11 +467,11 @@ def get_vector_db(
 ) -> VectorDB:
     """
     Factory function para obtener instancia singleton de VectorDB
-    
+
     Args:
         backend: "qdrant" o "chroma" (default desde env VECTOR_DB_BACKEND o "qdrant")
         **kwargs: Argumentos adicionales para VectorDB()
-    
+
     Returns:
         Instancia singleton de VectorDB
     """

@@ -7,19 +7,20 @@ Suite de tests que valida:
 - RAG Agent: pipeline completo de 6 pasos con mocks
 """
 
-import pytest
+import hashlib
 import json
 import os
 import tempfile
-import hashlib
 from datetime import datetime
 from unittest.mock import Mock, patch
 
+import pytest
+
+from sarai_agi.agents.rag import SENTINEL_RESPONSES, execute_rag, sentinel_response
+from sarai_agi.memory.web_audit import WebAuditLogger
+
 # Imports del sistema a testear
 from sarai_agi.memory.web_cache import WebCache
-from sarai_agi.memory.web_audit import WebAuditLogger
-from sarai_agi.agents.rag import execute_rag, sentinel_response, SENTINEL_RESPONSES
-
 
 # ============================================================================
 # FIXTURES

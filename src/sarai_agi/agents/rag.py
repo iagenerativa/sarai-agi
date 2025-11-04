@@ -25,13 +25,13 @@ Garantías:
 Uso:
     from sarai_agi.agents.rag import execute_rag
     from sarai_agi.model.pool import ModelPool
-    
+
     pool = ModelPool()
     state = {
         "input": "¿Cómo está el clima en Tokio?",
         "scores": {"web_query": 0.9}
     }
-    
+
     result_state = execute_rag(state, pool)
     print(result_state["response"])
 """
@@ -90,12 +90,12 @@ SENTINEL_RESPONSES = {
 def sentinel_response(reason: str) -> Dict:
     """
     Retorna una respuesta Sentinel predefinida
-    
+
     Filosofía SARAi: "Prefiere el silencio selectivo sobre la mentira"
-    
+
     Args:
         reason: Razón del Sentinel (clave en SENTINEL_RESPONSES)
-    
+
     Returns:
         State dict con response, sentinel_triggered, etc.
     """
@@ -115,7 +115,7 @@ def sentinel_response(reason: str) -> Dict:
 def execute_rag(state: Dict, model_pool) -> Dict:
     """
     Ejecuta pipeline RAG completo con garantías Sentinel
-    
+
     Pipeline (6 pasos):
     1. GARANTÍA SENTINEL: Verificar Safe Mode
     2. BÚSQUEDA CACHEADA: cached_search() con SearXNG
@@ -123,11 +123,11 @@ def execute_rag(state: Dict, model_pool) -> Dict:
     4. SÍNTESIS PROMPT: Prompt engineering con snippets
     5. LLM GENERATION: Expert (short/long según contexto)
     6. AUDITORÍA POST: log_web_query() con response
-    
+
     Args:
         state: State dict con 'input', 'scores', etc.
         model_pool: ModelPool para acceso a modelos expert
-    
+
     Returns:
         state actualizado con 'response' y 'rag_metadata'
     """
@@ -325,10 +325,10 @@ def execute_rag(state: Dict, model_pool) -> Dict:
 def create_rag_node(model_pool):
     """
     Factory function para crear nodo RAG compatible con LangGraph
-    
+
     Args:
         model_pool: ModelPool instance
-    
+
     Returns:
         Función nodo que recibe state y retorna state actualizado
     """
