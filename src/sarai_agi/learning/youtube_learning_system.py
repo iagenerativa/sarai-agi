@@ -11,6 +11,7 @@ from typing import Dict, List, Any, Optional
 from enum import Enum
 from datetime import datetime
 import logging
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -118,17 +119,83 @@ class YouTubeLearningSystem:
         )
     
     async def _extract_metadata(self, video_url: str) -> Dict[str, Any]:
-        """Extrae metadata del video (PLACEHOLDER)"""
-        # PLACEHOLDER: Aquí integrarías con youtube-dl o YouTube Data API
-        return {
-            "id": "abc123",
-            "title": "Sample Video",
-            "channel": "Sample Channel",
-            "duration": 600,  # 10 min
-            "views": 100000,
-            "likes": 5000,
-            "comments": 500
-        }
+        """
+        Extrae metadata REAL del video usando yt-dlp (STRICT MODE)
+        
+        Returns:
+            Dict con metadata real o {} si falla (NO mock)
+        """
+        try:
+            import yt_dlp
+            
+            # Configuración yt-dlp optimizada
+            ydl_opts = {
+                'quiet': True,
+                'no_warnings': True,
+                'extract_flat': False,
+                'skip_download': True,  # Solo metadata, no descargar video
+                'format': 'best',
+                # Extraer estadísticas adicionales
+                'extractor_args': {
+                    'youtube': {
+                        'skip': ['dash', 'hls']  # Skip streaming formats
+                    }
+                }
+            }
+            
+            # Ejecutar en thread pool para no bloquear event loop
+            loop = asyncio.get_event_loop()
+            
+            def _extract_sync():
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    return ydl.extract_info(video_url, download=False)
+            
+            # ✅ REAL extraction con yt-dlp
+            info = await loop.run_in_executor(None, _extract_sync)
+            
+            if not info:
+                logger.error(f"STRICT MODE: yt-dlp returned None for {video_url}")
+                return {}
+            
+            # Extraer campos relevantes
+            metadata = {
+                "id": info.get("id", ""),
+                "title": info.get("title", ""),
+                "channel": info.get("uploader", info.get("channel", "")),
+                "duration": info.get("duration", 0),
+                "views": info.get("view_count", 0),
+                "likes": info.get("like_count", 0),
+                "comments": info.get("comment_count", 0),
+                "upload_date": info.get("upload_date", ""),
+                "description": info.get("description", ""),
+                "tags": info.get("tags", []),
+                "categories": info.get("categories", []),
+                "thumbnail": info.get("thumbnail", ""),
+                "webpage_url": info.get("webpage_url", video_url)
+            }
+            
+            logger.info(
+                f"✅ REAL yt-dlp metadata extracted: {metadata['title']} "
+                f"({metadata['views']:,} views, {metadata['duration']}s)"
+            )
+            
+            return metadata
+            
+        except ImportError:
+            # ⚠️ STRICT MODE: Sin yt-dlp → retornar {} (NO mock)
+            logger.error(
+                "STRICT MODE: yt-dlp not installed - returning empty metadata. "
+                "Install with: pip install yt-dlp"
+            )
+            return {}
+            
+        except Exception as e:
+            # ⚠️ STRICT MODE: Error en extracción → retornar {} (NO mock)
+            logger.error(
+                f"STRICT MODE: yt-dlp extraction failed for {video_url}: {e} - "
+                "returning empty metadata"
+            )
+            return {}
     
     async def _extract_key_frames(self, video_url: str) -> List[Dict[str, Any]]:
         """Extrae frames clave del video (PLACEHOLDER)"""
