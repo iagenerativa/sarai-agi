@@ -140,28 +140,91 @@ class SocialLearningEngine:
         return insights
     
     async def _analyze_emotional_context(self, content: Dict[str, Any]) -> Dict[str, float]:
-        """Analiza contexto emocional usando EmotionalContextEngine"""
+        """Analiza contexto emocional usando EmotionalContextEngine (STRICT MODE)"""
         text_content = content.get("text", "")
         
         if not text_content:
             return {}
         
-        # PLACEHOLDER: Integración real con EmotionalContextEngine
-        # emotional_analysis = self.emotional_engine.analyze_emotional_content(text_content)
+        # ⚠️ STRICT MODE: Si no hay EmotionalContextEngine, retornar vacío (no mock)
+        if self.emotional_engine is None:
+            logger.warning(
+                "STRICT MODE: EmotionalContextEngine not available - returning empty emotions"
+            )
+            return {}
         
-        # Simulación de análisis emocional (16 emociones)
-        emotions = {
-            "joy": 0.3,
-            "trust": 0.7,
-            "fear": 0.1,
-            "surprise": 0.2,
-            "sadness": 0.0,
-            "disgust": 0.0,
-            "anger": 0.0,
-            "anticipation": 0.5
-        }
-        
-        return emotions
+        try:
+            # ✅ INTEGRACIÓN REAL: Usar EmotionalContextEngine.analyze_emotional_context()
+            user_id = content.get("user_id", "social_learning_anonymous")
+            language = content.get("language", "es")
+            
+            emotional_response = self.emotional_engine.analyze_emotional_context(
+                text=text_content,
+                user_id=user_id,
+                language=language
+            )
+            
+            # Convertir EmotionalResponse a dict con scores (0.0-1.0)
+            # EmotionalResponse tiene: detected_emotion, confidence, empathy_level, etc.
+            emotion_name = emotional_response.detected_emotion.value
+            confidence = emotional_response.confidence
+            empathy = emotional_response.empathy_level
+            
+            # Construir dict de emociones compatible con el sistema
+            # Mapear la emoción detectada a score basado en confidence
+            emotions = {
+                "joy": 0.0,
+                "trust": 0.0,
+                "fear": 0.0,
+                "surprise": 0.0,
+                "sadness": 0.0,
+                "disgust": 0.0,
+                "anger": 0.0,
+                "anticipation": 0.0
+            }
+            
+            # Mapear emociones de EmotionalContext a emociones básicas
+            emotion_mapping = {
+                "excited": {"joy": 0.8, "anticipation": 0.6},
+                "frustrated": {"anger": 0.7, "sadness": 0.5},
+                "urgent": {"anticipation": 0.8, "fear": 0.3},
+                "confused": {"fear": 0.5, "surprise": 0.4},
+                "appreciative": {"joy": 0.7, "trust": 0.8},
+                "complaining": {"anger": 0.6, "disgust": 0.4},
+                "playful": {"joy": 0.8, "surprise": 0.3},
+                "friendly": {"joy": 0.6, "trust": 0.7},
+                "doubtful": {"fear": 0.4, "surprise": 0.5},
+                "empathetic": {"trust": 0.9, "sadness": 0.3},
+                "assertive": {"trust": 0.6, "anticipation": 0.5},
+                "formal": {"trust": 0.5},
+                "informal": {"joy": 0.4, "trust": 0.4},
+                "ironic": {"surprise": 0.6, "joy": 0.3},
+                "neutral": {"trust": 0.3}
+            }
+            
+            # Aplicar mapping basado en emoción detectada
+            if emotion_name in emotion_mapping:
+                for basic_emotion, score in emotion_mapping[emotion_name].items():
+                    emotions[basic_emotion] = score * confidence
+            
+            # Ajustar por empathy level (emociones positivas aumentan con alta empatía)
+            if empathy > 0.7:
+                emotions["trust"] = min(1.0, emotions["trust"] + 0.2)
+                emotions["joy"] = min(1.0, emotions["joy"] + 0.1)
+            
+            logger.info(
+                f"✅ REAL EmotionalContext analysis: {emotion_name} "
+                f"(confidence={confidence:.2f}, empathy={empathy:.2f})"
+            )
+            
+            return emotions
+            
+        except Exception as e:
+            # ⚠️ STRICT MODE: Log error y retornar vacío (no mock)
+            logger.error(
+                f"STRICT MODE: EmotionalContextEngine failed ({e}) - returning empty emotions"
+            )
+            return {}
     
     async def _analyze_domain_specific(
         self,
