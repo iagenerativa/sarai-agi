@@ -47,6 +47,7 @@ psutil = [
 core_deps = [
     "requests>=2.31.0",           # RAG web search 
     "qdrant-client>=1.7.0",      # Primary vector DB (production)
+    "diskcache>=5.6.0",          # Web cache persistence
 ]
 # Optional development dependencies  
 dev_optional = [
@@ -99,6 +100,7 @@ markers = [
     "requires_transformers: marks tests that require transformers",
     "requires_requests: marks tests that require requests",
     "requires_openai: marks tests that require openai",
+    "requires_diskcache: marks tests that require diskcache",
     "core: marks tests for core functionality (always run)",
 ]
 

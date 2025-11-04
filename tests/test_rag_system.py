@@ -20,7 +20,10 @@ from sarai_agi.agents.rag import SENTINEL_RESPONSES, execute_rag, sentinel_respo
 from sarai_agi.memory.web_audit import WebAuditLogger
 
 # Mark all RAG tests as requiring requests
-pytestmark = pytest.mark.requires_requests
+pytestmark = [
+    pytest.mark.requires_requests,
+    pytest.mark.requires_diskcache  # Cache tests require diskcache
+]
 
 # Imports del sistema a testear
 from sarai_agi.memory.web_cache import WebCache
@@ -28,6 +31,14 @@ from sarai_agi.memory.web_cache import WebCache
 # ============================================================================
 # FIXTURES
 # ============================================================================
+
+@pytest.fixture(autouse=True)
+def disable_safe_mode():
+    """Desactiva Safe Mode para todos los tests RAG"""
+    with patch('sarai_agi.agents.rag.is_safe_mode', return_value=False):
+        with patch('sarai_agi.memory.web_cache.is_safe_mode', return_value=False):
+            yield
+
 
 @pytest.fixture
 def temp_dir():
@@ -382,11 +393,9 @@ class TestRAGAgent:
         assert result["sentinel_triggered"] is True
         assert result["sentinel_reason"] == "web_search_disabled"
 
-    @patch('sarai_agi.agents.rag.is_safe_mode')
     @patch('sarai_agi.agents.rag.cached_search')
-    def test_search_failure_triggers_sentinel(self, mock_search, mock_safe_mode, mock_model_pool):
+    def test_search_failure_triggers_sentinel(self, mock_search, mock_model_pool):
         """Test: Fallo de búsqueda debe trigger Sentinel"""
-        mock_safe_mode.return_value = False  # Desactivar Safe Mode
         mock_search.return_value = None  # Simular fallo
 
         state = {"input": "Test query"}
@@ -395,11 +404,9 @@ class TestRAGAgent:
         assert result["sentinel_triggered"] is True
         assert result["sentinel_reason"] == "web_search_failed"
 
-    @patch('sarai_agi.agents.rag.is_safe_mode')
     @patch('sarai_agi.agents.rag.cached_search')
-    def test_zero_snippets_triggers_sentinel(self, mock_search, mock_safe_mode, mock_model_pool):
+    def test_zero_snippets_triggers_sentinel(self, mock_search, mock_model_pool):
         """Test: 0 snippets debe trigger Sentinel"""
-        mock_safe_mode.return_value = False  # Desactivar Safe Mode
         mock_search.return_value = {
             "source": "searxng",
             "snippets": []  # 0 snippets
@@ -411,12 +418,10 @@ class TestRAGAgent:
         assert result["sentinel_triggered"] is True
         assert result["sentinel_reason"] == "web_search_failed"
 
-    @patch('sarai_agi.agents.rag.is_safe_mode')
     @patch('sarai_agi.agents.rag.cached_search')
     @patch('sarai_agi.agents.rag.get_web_audit_logger')
-    def test_successful_rag_pipeline(self, mock_audit, mock_search, mock_safe_mode, mock_model_pool):
+    def test_successful_rag_pipeline(self, mock_audit, mock_search, mock_model_pool):
         """Test: Pipeline RAG exitoso completo"""
-        mock_safe_mode.return_value = False  # Desactivar Safe Mode
         # Mock de búsqueda exitosa
         mock_search.return_value = {
             "source": "searxng",
@@ -447,17 +452,9 @@ class TestRAGAgent:
         # Verificar que se loggeó en audit
         assert mock_logger.log_web_query.called
 
-    @patch('sarai_agi.agents.rag.is_safe_mode')
     @patch('sarai_agi.agents.rag.cached_search')
-    @patch('sarai_agi.agents.rag.get_web_audit_logger')
-    def test_long_prompt_uses_expert_long(self, mock_audit, mock_search, mock_safe_mode, mock_model_pool):
+    def test_long_prompt_uses_expert_long(self, mock_search, mock_model_pool):
         """Test: Prompts largos deben usar expert_long"""
-        mock_safe_mode.return_value = False  # Desactivar Safe Mode
-        
-        # Mock de audit logger
-        mock_logger = Mock()
-        mock_audit.return_value = mock_logger
-        
         # Mock con muchos snippets (prompt largo)
         snippets = [
             {"title": f"Title {i}", "url": f"http://{i}.com", "content": "A" * 500}
@@ -476,12 +473,9 @@ class TestRAGAgent:
         assert result["rag_metadata"]["llm_model"] == "expert_long"
         assert result["rag_metadata"]["prompt_length"] > 1500
 
-    @patch('sarai_agi.agents.rag.is_safe_mode')
     @patch('sarai_agi.agents.rag.cached_search')
-    def test_model_unavailable_triggers_sentinel(self, mock_search, mock_safe_mode, mock_model_pool):
+    def test_model_unavailable_triggers_sentinel(self, mock_search, mock_model_pool):
         """Test: Modelo no disponible debe trigger Sentinel"""
-        mock_safe_mode.return_value = False  # Desactivar Safe Mode
-        
         mock_search.return_value = {
             "source": "searxng",
             "snippets": [{"title": "T", "url": "http://t.com", "content": "C"}]
@@ -511,20 +505,17 @@ class TestRAGAgent:
 class TestRAGIntegration:
     """Tests de integración end-to-end"""
 
-    @patch('sarai_agi.agents.rag.is_safe_mode')
     @patch('sarai_agi.memory.web_cache.requests')
     @patch('sarai_agi.agents.rag.get_web_audit_logger')
     def test_full_pipeline_with_real_cache(
         self,
         mock_audit,
         mock_requests,
-        mock_safe_mode,
         temp_dir,
         mock_searxng_response,
         mock_model_pool
     ):
         """Test: Pipeline completo con cache real"""
-        mock_safe_mode.return_value = False  # Desactivar Safe Mode
         # Setup mock de requests
         mock_response = Mock()
         mock_response.status_code = 200
@@ -537,36 +528,33 @@ class TestRAGIntegration:
 
         # Crear cache real con temp dir
         from sarai_agi.memory import web_cache
-        
-        # También necesitamos mockear is_safe_mode en web_cache
-        with patch('sarai_agi.memory.web_cache.is_safe_mode', return_value=False):
-            original_instance = web_cache._web_cache_instance
-            web_cache._web_cache_instance = WebCache(
-                cache_dir=os.path.join(temp_dir, "web_cache")
-            )
+        original_instance = web_cache._web_cache_instance
+        web_cache._web_cache_instance = WebCache(
+            cache_dir=os.path.join(temp_dir, "web_cache")
+        )
 
-            try:
-                state = {"input": "¿Cómo está el clima en Tokio?"}
-                result = execute_rag(state, mock_model_pool)
+        try:
+            state = {"input": "¿Cómo está el clima en Tokio?"}
+            result = execute_rag(state, mock_model_pool)
 
-                # Verificar éxito
-                assert result.get("sentinel_triggered", True) is False
-                assert "response" in result
-                assert result["rag_metadata"]["source"] == "searxng"
+            # Verificar éxito
+            assert result.get("sentinel_triggered", True) is False
+            assert "response" in result
+            assert result["rag_metadata"]["source"] == "searxng"
 
-                # Segunda ejecución debe usar cache
-                execute_rag(state, mock_model_pool)
+            # Segunda ejecución debe usar cache
+            execute_rag(state, mock_model_pool)
 
-                # El contador de llamadas a requests.get NO debe aumentar
-                call_count = mock_requests.get.call_count
+            # El contador de llamadas a requests.get NO debe aumentar
+            call_count = mock_requests.get.call_count
 
-                # Tercera ejecución
-                execute_rag(state, mock_model_pool)
-                assert mock_requests.get.call_count == call_count, "Debe usar cache"
+            # Tercera ejecución
+            execute_rag(state, mock_model_pool)
+            assert mock_requests.get.call_count == call_count, "Debe usar cache"
 
-            finally:
-                # Restaurar singleton
-                web_cache._web_cache_instance = original_instance
+        finally:
+            # Restaurar singleton
+            web_cache._web_cache_instance = original_instance
 
 
 if __name__ == "__main__":
