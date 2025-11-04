@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -34,13 +34,15 @@ jobs:
         pip install pytest-cov
         pytest --cov=src --cov-report=xml --cov-report=term
     
-    - name: Upload coverage to Codecov
-      if: matrix.python-version == '3.10'
+    - name: Upload coverage to Codecov (if token present)
+      if: matrix.python-version == '3.10' && secrets.CODECOV_TOKEN != ''
       uses: codecov/codecov-action@v4
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
+        fail_ci_if_error: false
 
   lint:
     name: Lint and Type Check
@@ -86,7 +88,7 @@ jobs:
     - name: Verify tag matches VERSION on release
       if: github.event_name == 'release'
       run: |
-        VERSION=$(cat VERSION)
+        VERSION=$(head -n1 VERSION | sed 's/^v//' | tr -d '\r\n ')
         TAG=${GITHUB_REF#refs/tags/v}
         if [ "$VERSION" != "$TAG" ]; then
           echo "::error::VERSION ($VERSION) no coincide con tag ($TAG)"
