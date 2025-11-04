@@ -1,0 +1,542 @@
+# ============================================================================
+# SARAi v2.14 - Unified Models Configuration
+# ============================================================================
+#
+# Este archivo define TODOS los modelos disponibles en SARAi usando
+# la arquitectura Unified Model Wrapper basada en LangChain.
+#
+# FILOSOFÍA v2.14:
+#   "SARAi no debe conocer sus modelos. Solo debe invocar capacidades.
+#    YAML define, LangChain orquesta, el wrapper abstrae.
+#    Cuando el hardware mejore, solo cambiamos configuración, nunca código."
+#
+# CÓMO AGREGAR UN MODELO NUEVO:
+#   1. Añadir entrada en este YAML
+#   2. Reiniciar SARAi
+#   3. Usar con: get_model("nombre_modelo")
+#   NO se requiere modificar código Python.
+#
+# BACKENDS SOPORTADOS:
+#   - gguf: llama-cpp-python (CPU optimizado, Q4_K_M)
+#   - transformers: HuggingFace 4-bit (GPU cuando disponible)
+#   - multimodal: Qwen3-VL, Qwen2.5-Omni (vision + audio)
+#   - ollama: API local (futuro)
+#   - openai_api: Cloud APIs - GPT-4, Claude, Gemini (futuro)
+#
+# HARDWARE ACTUAL:
+#   - CPU-only, 16GB RAM
+#   - Max 2 LLMs concurrentes
+#   - Cuantización Q4_K_M obligatoria
+#
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# MODELOS ACTUALES - TEXTO (SISTEMA CASCADE ORACLE v3.4.0)
+# ----------------------------------------------------------------------------
+# FILOSOFÍA v3.4.0: SOLAR (modelo único) reemplazado por CASCADE (3 niveles)
+# 
+# Sistema de cascada inteligente:
+#   TIER 1: LFM2-1.2B     → 80% queries (confidence ≥0.6) ~1.2s  [LOCAL]
+#   TIER 2: MiniCPM-4.1   → 18% queries (0.3-0.6)        ~4s     [REMOTO Ollama]
+#   TIER 3: Qwen-3-8B     →  2% queries (<0.3)           ~15s    [REMOTO Ollama]
+#
+# DISTRIBUCIÓN DE MODELOS v3.4.0:
+#   • LOCAL (swapping): LFM2-1.2B, Qwen3-VL-4B (visión bajo demanda)
+#   • REMOTO (Ollama): MiniCPM-4.1, Qwen-3-8B, VisCoder2-7B
+#
+# Beneficio: Latencia promedio 2.3s vs 15s (SOLAR único) = 85% más rápido
+# ----------------------------------------------------------------------------
+
+lfm2:
+  name: "LiquidAI-LFM2-1.2B"
+  type: "text"
+  backend: "gguf"
+  location: "local"  # v3.4.0: Modelo LOCAL (siempre disponible)
+  
+  # Modelo tiny para respuestas rápidas y soft-skills
+  # Repo: LiquidAI/LFM2-1.2B-GGUF
+  # CRÍTICO: Verificar que este archivo existe en local
+  model_path: "models/gguf/LFM2-1.2B-Q4_K_M.gguf"  # v3.5.1: Migrated path
+  
+  # Configuración
+  n_ctx: 2048
+  n_threads: 6
+  use_mmap: true
+  use_mlock: false
+  
+  # Parámetros (más creativo para empatía)
+  temperature: 0.8
+  max_tokens: 512
+  top_p: 0.95
+  
+  # Gestión de memoria
+  # CASCADE TIER 1: Siempre en memoria (80% de queries)
+  # EXCEPCIÓN: Se descarga SOLO si Qwen3-VL está activo y hay presión de RAM
+  load_on_demand: false  # Siempre cargado por defecto
+  priority: 10  # Prioridad MÁXIMA (solo cede ante Qwen3-VL si es necesario)
+  max_memory_mb: 700
+  
+  # Política de coexistencia con Qwen3-VL
+  allow_unload_for_vision: true  # Puede descargarse temporalmente para visión
+
+# CASCADE TIER 2: MiniCPM-4.1 (Ollama REMOTO)
+minicpm:
+  name: "MiniCPM-4.1"
+  type: "text"
+  backend: "ollama"
+  location: "remote"  # v3.4.0: Modelo REMOTO en Ollama
+  
+  # Servidor Ollama (misma instancia que VisCoder2 y Qwen3)
+  api_url: "${OLLAMA_BASE_URL}"
+  model_name: "minicpm:4b"
+  
+  # Tier 2: Queries de complejidad media (18% del tráfico)
+  # Confidence: 0.3 ≤ score < 0.6
+  tier: 2
+  
+  # Configuración
+  n_ctx: 4096
+  
+  # Parámetros
+  temperature: 0.6
+  max_tokens: 1024
+  top_p: 0.95
+  timeout: 120
+  
+  # Gestión de memoria
+  load_on_demand: true  # Carga bajo demanda (Ollama remoto)
+  priority: 8
+
+# CASCADE TIER 3: Qwen-3-8B (Ollama REMOTO)
+qwen3:
+  name: "Qwen-3-8B"
+  type: "text"
+  backend: "ollama"
+  location: "remote"  # v3.4.0: Modelo REMOTO en Ollama
+  
+  # Servidor Ollama (misma instancia que MiniCPM y VisCoder2)
+  api_url: "${OLLAMA_BASE_URL}"
+  model_name: "qwen3:8b"
+  
+  # Tier 3: Queries complejas o force patterns (2% del tráfico)
+  # Confidence: score < 0.3 O forzado por patrones especiales
+  tier: 3
+  force_patterns:
+    - "analiza en profundidad"
+    - "análisis exhaustivo"
+    - "debate filosófico"
+    - "considera todos los aspectos"
+  
+  # Configuración
+  n_ctx: 8192  # Contexto largo para análisis profundos
+  
+  # Parámetros
+  temperature: 0.5
+  max_tokens: 2048
+  top_p: 0.95
+  timeout: 180
+  
+  # Gestión de memoria
+  load_on_demand: true  # Carga bajo demanda (Ollama remoto)
+  priority: 7
+
+viscoder2:
+  name: "VisCoder2-7B (Development Specialist)"
+  type: "text"
+  backend: "ollama"
+  location: "remote"  # v3.4.0: Modelo REMOTO en Ollama
+  
+  # Modelo especializado en desarrollo de código
+  # Servidor: Ollama (misma instancia que MiniCPM y Qwen3)
+  api_url: "${OLLAMA_BASE_URL}"
+  model_name: "${VISCODER2_MODEL_NAME}"
+  
+  # Especialización
+  specialty: "code_generation"  # Python, JavaScript, Rust, Go, etc.
+  use_cases:
+    - "Generación de código completo"
+    - "Debugging y análisis de errores"
+    - "Refactoring y optimización"
+    - "Documentación de código"
+    - "Tests unitarios"
+  
+  # Configuración de contexto
+  n_ctx: 4096  # Contexto largo para funciones/clases completas
+  
+  # Parámetros de generación (optimizados para código)
+  temperature: 0.3  # Baja temperatura para código preciso
+  max_tokens: 2048
+  top_p: 0.95
+  top_k: 40
+  repeat_penalty: 1.1
+  timeout: 120
+  
+  # Gestión de memoria
+  load_on_demand: true  # Solo cuando se necesita programación (Ollama remoto)
+  priority: 8  # Alta prioridad (especialista)
+  
+  # System prompt default
+  system_prompt: |
+    You are VisCoder2, an expert programming assistant specialized in:
+    - Writing clean, efficient, and well-documented code
+    - Following best practices and design patterns
+    - Generating comprehensive unit tests
+    - Debugging complex issues with detailed explanations
+    
+    Always provide:
+    1. Working code with proper error handling
+    2. Clear comments explaining logic
+    3. Type hints (Python) or JSDoc (JavaScript)
+    4. Edge case considerations
+
+# ----------------------------------------------------------------------------
+# MODELOS MULTIMODALES (Transformers)
+# ----------------------------------------------------------------------------
+
+qwen3_vl:
+  name: "Qwen3-VL-4B-Instruct"
+  type: "multimodal"
+  backend: "gguf"  # v3.5.1: Changed to GGUF for efficiency
+  location: "local"  # v3.4.0: Modelo LOCAL con swapping bajo demanda
+  
+  # GGUF model path (much more efficient than transformers)
+  model_path: "models/gguf/Qwen3-VL-4B-Instruct.Q6_K.gguf"
+  
+  # llama-cpp configuration
+  n_ctx: 2048
+  n_threads: 4
+  use_mmap: true
+  use_mlock: false
+  n_gpu_layers: 0  # CPU-only for compatibility
+  
+  # Capacidades
+  supports_images: true
+  supports_video: false  # GGUF version may not support video
+  supports_audio: false
+  
+  # Parámetros
+  temperature: 0.7
+  max_tokens: 1024
+  
+  # Gestión de memoria con SWAPPING
+  # CRÍTICO: Swapping automático para optimizar RAM
+  # 1. Cuando se necesita visión: carga Qwen3-VL, descarga LFM2 temporal
+  # 2. Después de tarea: descarga Qwen3-VL, recarga LFM2
+  load_on_demand: true  # Solo cuando se necesita visión (swapping)
+  priority: 9  # Prioridad MÁXIMA cuando está activo (sobre LFM2)
+  max_memory_mb: 4096
+  cache_dir: "models/cache/qwen"
+  
+  # Política de swapping con LFM2
+  can_evict_lfm2: true  # Puede solicitar descarga temporal de LFM2
+  auto_unload_after_use: true  # Se descarga automáticamente después de uso
+  ttl_seconds: 60  # Timeout de inactividad antes de descarga
+
+# ----------------------------------------------------------------------------
+# MODELOS FUTUROS (Descomentados cuando tengas recursos)
+# ----------------------------------------------------------------------------
+
+# GPU Migration: Descomentar cuando tengas GPU disponible
+# solar_gpu:
+#   name: "SOLAR-10.7B-Instruct (GPU Transformers)"
+#   type: "text"
+#   backend: "transformers"
+#   
+#   repo_id: "upstage/SOLAR-10.7B-Instruct-v1.0"
+#   
+#   load_in_4bit: true
+#   device_map: "auto"
+#   
+#   temperature: 0.7
+#   max_tokens: 1024
+#   
+#   load_on_demand: true
+#   priority: 10
+
+# OpenAI GPT-4 Vision: Descomentar cuando tengas API key
+# gpt4_vision:
+#   name: "GPT-4 Vision Preview"
+#   type: "multimodal"
+#   backend: "openai_api"
+#   
+#   # API Configuration
+#   api_key: "${OPENAI_API_KEY}"  # Variable de entorno
+#   api_url: "https://api.openai.com/v1"
+#   model_name: "gpt-4-vision-preview"
+#   
+#   # Capacidades
+#   supports_images: true
+#   
+#   # Parámetros
+#   temperature: 0.7
+#   max_tokens: 2048
+#   
+#   load_on_demand: true
+#   priority: 5
+
+# Anthropic Claude Opus: Descomentar cuando tengas API key
+# claude_opus:
+#   name: "Claude 3 Opus"
+#   type: "text"
+#   backend: "openai_api"
+#   
+#   # API Configuration (OpenAI-compatible proxy)
+#   api_key: "${ANTHROPIC_API_KEY}"
+#   api_url: "https://api.anthropic.com/v1"
+#   model_name: "claude-3-opus-20240229"
+#   
+#   # Parámetros
+#   temperature: 0.7
+#   max_tokens: 4096
+#   
+#   load_on_demand: true
+#   priority: 4
+
+# Google Gemini Pro Vision: Descomentar cuando tengas API key
+# gemini_vision:
+#   name: "Gemini Pro Vision"
+#   type: "multimodal"
+#   backend: "openai_api"
+#   
+#   # API Configuration
+#   api_key: "${GOOGLE_API_KEY}"
+#   api_url: "https://generativelanguage.googleapis.com/v1"
+#   model_name: "gemini-pro-vision"
+#   
+#   # Capacidades
+#   supports_images: true
+#   supports_video: true
+#   
+#   # Parámetros
+#   temperature: 0.7
+#   max_tokens: 2048
+#   
+#   load_on_demand: true
+#   priority: 3
+
+# Ollama Llama3 70B: Descomentar cuando tengas Ollama corriendo
+# ollama_llama3:
+#   name: "Llama 3 70B (Ollama)"
+#   type: "text"
+#   backend: "ollama"
+#   
+#   # Ollama Configuration
+#   api_url: "http://localhost:11434"
+#   model_name: "llama3:70b"
+#   
+#   # Parámetros
+#   temperature: 0.7
+#   
+#   load_on_demand: true
+#   priority: 2
+
+# ----------------------------------------------------------------------------
+# MODELOS LEGACY (Compatibilidad con código anterior)
+# ----------------------------------------------------------------------------
+
+# NOTA: Estos aliases mantienen compatibilidad con model_pool.py antiguo
+# Se mapean a los modelos unified nuevos
+
+# Legacy mappings (retrocompatibilidad model_pool → Unified Wrapper)
+# v3.4.0: SOLAR reemplazado por CASCADE ORACLE (sistema de 3 niveles)
+legacy_mappings:
+  backend: "config"  # Marca como configuración (no modelo)
+  # CASCADE ORACLE: Sistema inteligente LFM2→MiniCPM→Qwen-3
+  expert: cascade          # model_pool.get("expert") → CascadeWrapper
+  expert_short: cascade    # Usa confidence router automáticamente
+  expert_long: cascade     # Escala según complejidad de query
+  tiny: lfm2               # Acceso directo a LFM2 (tier 1)
+  multimodal: qwen3_vl     # Único modelo multimodal (visión)
+  # SOLAR backward compatibility (DEPRECATED v3.4.0 → redirige a cascade)
+  solar: cascade           # Legacy: solar → CASCADE ORACLE
+  solar_short: cascade     # Legacy: solar_short → CASCADE ORACLE
+  solar_long: cascade      # Legacy: solar_long → CASCADE ORACLE
+
+# ----------------------------------------------------------------------------
+# EMBEDDINGS (v2.14: INTEGRADO en Unified Wrapper)
+# ----------------------------------------------------------------------------
+
+embeddings:
+  name: "EmbeddingGemma-300M"
+  type: "embedding"  # Tipo específico (no LLM)
+  backend: "embedding"  # Backend especializado
+  
+  # HuggingFace configuration
+  repo_id: "google/embeddinggemma-300m-qat-q4_0-unquantized"
+  quantization: "4bit"
+  device: "cpu"
+  
+  # Memory management
+  load_on_demand: false  # CRÍTICO: Siempre cargado (alta prioridad)
+  priority: 10  # Alta prioridad (TRM-Router depende)
+  max_memory_mb: 150
+  
+  # Embedding-specific configuration
+  embedding_dim: 768  # REAL: EmbeddingGemma produce 768-D
+  cache_dir: "models/cache/embeddings"
+
+# ----------------------------------------------------------------------------
+# TRM CLASSIFIER (No gestionado por Unified Wrapper - sistema separado)
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# TRM CLASSIFIER (v2.14: INTEGRADO en Unified Wrapper)
+# ----------------------------------------------------------------------------
+
+trm_classifier:
+  name: "TRM-Dual-7M"
+  type: "classifier"  # Tipo específico (no LLM)
+  backend: "pytorch_checkpoint"  # Backend PyTorch custom
+  
+  # Arquitectura TRM
+  architecture: "trm"
+  params: 7000000  # 7M
+  d_model: 256
+  d_latent: 256
+  H_cycles: 3
+  L_cycles: 4
+  
+  # Gestión de modelo
+  checkpoint_path: "models/trm_classifier/checkpoint.pth"
+  device: "cpu"
+  load_on_startup: true
+  max_memory_mb: 50
+
+# ============================================================================
+# CONFIGURACIÓN GLOBAL DEL SISTEMA
+# ============================================================================
+
+# MCP (Meta Control Plane) - v2.14: INTEGRADO en Unified Wrapper
+mcp:
+  name: "MCP-Orchestrator"
+  type: "orchestrator"  # Tipo específico
+  backend: "pytorch_checkpoint"  # Backend PyTorch custom
+  device: "cpu"
+  
+  # Configuración MCP
+  mode: "rules"  # "rules" o "learned"
+  feedback_buffer_size: 100
+  alpha_beta_sum_tolerance: 0.01
+  checkpoint_path: "models/mcp/checkpoint.pth"
+  
+  # Training config
+  training:
+    min_samples: 100
+    learning_rate: 0.001
+    batch_size: 32
+
+# Límites de memoria (NO es un modelo, es configuración)
+memory:
+  backend: "config"  # Marca como configuración
+  total_ram_mb: 16384  # 16GB
+  reserved_for_system_mb: 4096  # 4GB reserva
+  max_concurrent_llms: 2  # CRÍTICO: Nunca más de 2 LLMs en RAM
+  unload_timeout_seconds: 60  # TTL: Descargar modelos no usados
+
+# Rutas del sistema
+# Rutas del sistema (configuración global)
+paths:
+  backend: "config"  # Marca como configuración (no modelo)
+  logs_dir: "logs"
+  feedback_log: "logs/feedback_log.jsonl"
+  models_cache: "models/cache"
+  checkpoints: "models/checkpoints"
+  datasets: "data"
+
+# ============================================================================
+# NOTAS DE USO
+# ============================================================================
+#
+# 1. DISTRIBUCIÓN DE MODELOS v3.4.0 (LOCAL vs REMOTO):
+#
+#    LOCAL (swapping dinámico):
+#    ├─ LFM2-1.2B         → Siempre en memoria (~700MB)
+#    │                      EXCEPCIÓN: Descarga temporal si Qwen3-VL necesita RAM
+#    └─ Qwen3-VL-4B       → Carga bajo demanda para visión (~4GB)
+#                           Auto-descarga después de uso (TTL 60s)
+#
+#    REMOTO (Ollama servidor):
+#    ├─ MiniCPM-4.1       → CASCADE Tier 2 (18% queries)
+#    ├─ Qwen-3-8B         → CASCADE Tier 3 (2% queries)
+#    └─ VisCoder2-7B      → Code Expert (bajo demanda)
+#
+# 2. POLÍTICAS DE SWAPPING (LOCAL):
+#    
+#    Estado NORMAL (texto):
+#    - LFM2 en memoria (~700MB)
+#    - Qwen3-VL descargado
+#    
+#    Estado VISIÓN (imagen/OCR):
+#    1. Detecta necesidad de visión → should_use_vision()
+#    2. Carga Qwen3-VL (~4GB) → Descarga LFM2 temporal
+#    3. Procesa imagen → Genera respuesta
+#    4. TTL 60s sin uso → Descarga Qwen3-VL
+#    5. Recarga LFM2 automáticamente
+#    
+#    RAM máxima utilizada:
+#    - Modo texto: ~700MB (solo LFM2)
+#    - Modo visión: ~4GB (solo Qwen3-VL temporalmente)
+#    - NUNCA ambos simultáneos (swapping garantizado)
+#
+# 3. CASCADE ORACLE (REMOTO):
+#    
+#    Tier 1 (80%): LFM2-1.2B
+#    - Confidence ≥0.6
+#    - Queries simples/medias
+#    - Latencia ~1.2s
+#    - LOCAL
+#    
+#    Tier 2 (18%): MiniCPM-4.1
+#    - 0.3 ≤ Confidence < 0.6
+#    - Queries medias/complejas
+#    - Latencia ~4s
+#    - REMOTO (Ollama)
+#    
+#    Tier 3 (2%): Qwen-3-8B
+#    - Confidence < 0.3 O force patterns
+#    - Queries muy complejas
+#    - Latencia ~15s
+#    - REMOTO (Ollama)
+#    
+#    Fallback chain: Qwen-3 → MiniCPM → LFM2 → Exception
+#
+# 4. PRIORIDAD Y GESTIÓN DE MEMORIA:
+#    
+#    Priority 10: LFM2 (base, siempre disponible)
+#    Priority 9:  Qwen3-VL (cuando activo, sobre LFM2)
+#    Priority 8:  MiniCPM, VisCoder2 (especialistas remotos)
+#    Priority 7:  Qwen-3 (análisis profundo remoto)
+#
+# 5. LOAD_ON_DEMAND:
+#    - false: Modelo se carga al iniciar SARAi (solo LFM2)
+#    - true: Modelo se carga solo cuando se usa (resto)
+#
+# 6. BACKEND:
+#    - gguf: CPU con llama-cpp-python (LFM2)
+#    - ollama: API servidor remoto (MiniCPM, Qwen-3, VisCoder2)
+#    - multimodal: Vision con Transformers (Qwen3-VL)
+#
+# 7. VARIABLES DE ENTORNO:
+#    - Formato: ${VARIABLE_NAME}
+#    - Se resuelven automáticamente al cargar
+#    - Ejemplos en .env:
+#      * OLLAMA_BASE_URL=http://192.168.1.100:11434  (servidor remoto)
+#      * VISCODER2_MODEL_NAME=viscoder2:7b
+#
+# 8. LEGACY MAPPINGS (backward compatibility):
+#    - model_pool.get("expert") → CascadeWrapper (Tier automático)
+#    - model_pool.get("solar") → CascadeWrapper (DEPRECATED v3.4.0)
+#    - model_pool.get("tiny") → LFM2 directo
+#
+# 9. VERIFICACIÓN DE MODELOS:
+#    
+#    LOCAL (verificar antes de iniciar):
+#    ✓ models/cache/lfm2/lfm2-1.2b.Q4_K_M.gguf
+#    ✓ models/cache/qwen/Qwen3-VL-4B-Instruct (HuggingFace cache)
+#    
+#    REMOTO (verificar Ollama activo):
+#    $ curl ${OLLAMA_BASE_URL}/api/tags
+#    ✓ minicpm:4b
+#    ✓ qwen3:8b
+#    ✓ viscoder2:7b
+#
+# ============================================================================
