@@ -118,6 +118,14 @@ Currently migrating from SARAi_v2 with focus on:
 
 ---
 
+# SARAi v3.6.0 - Guía para Agentes de IA (RAG + Health Dashboard)
+
+> Documento maestro de referencia para implementación, operación, auditoría y seguimiento del proyecto SARAi.
+
+Última actualización: 2025-11-04
+
+---
+
 ## 🚀 ACTUALIZACIÓN v3.6.0 - RAG MEMORY + HEALTH DASHBOARD (4 Nov 2025)
 
 **Commits recientes**:
@@ -463,11 +471,79 @@ SARAi es una AGI local híbrida, modular y auditada, evolucionada desde v2.12 ha
 - **Auditoría**: logs SHA-256/HMAC para decisiones CASCADE, /health con content negotiation, /metrics Prometheus
 - **DevSecOps**: releases firmadas (Cosign), SBOM (Syft), build attestation
 
-⏳ **PRÓXIMO/ROADMAP** (post v3.6):
-- **FASE 3**: Skills Containerizados (Docker + Firejail + gRPC) - Est: 4-5h
-- **FASE 4**: Tone Memory Persistence (JSONL persistente para Layer2) - Est: 2-3h
+✅ **FASE 3 COMPLETADA** (v3.6.0 - 4 Nov 2025): **Containerized Skills Production-Ready**
+- ✅ **gRPC Infrastructure**: core/grpc_skill_client.py (561 LOC) - Retry, health, HMAC
+- ✅ **HMAC Audit System**: core/web_audit.py (+140 LOC) - log_skill_execution(), verify_skill_executions()
+- ✅ **skill_sql (Port 50051)**: 7 archivos, 1,610 LOC - SELECT-only, sqlparse validation, 100 rows max, Firejail caps.drop ALL
+- ✅ **skill_bash (Port 50052)**: 7 archivos, 1,527 LOC - 15 comandos whitelist, no pipes/redirects, 10KB output max, Firejail shell none
+- ✅ **skill_network (Port 50053)**: 7 archivos, 1,490 LOC - ping/traceroute/nslookup, rate limiting 5/min, domain whitelist, Firejail caps.keep net_raw,net_admin
+- ✅ **Docker Compose**: docker-compose.yml (+180 LOC) - 3 skills orchestration, sarai_internal + sarai_internet networks, health checks
+- ✅ **Documentation**: RESUMEN_EJECUTIVO_FASE3_SKILLS.md (400 LOC), skills/README.md (150 LOC), 3x skill READMEs (1,000 LOC)
+- ✅ **Tests**: 82+ tests (48 unit + 24 integration + 10 E2E)
+- ✅ **Total FASE 3**: 5,508 LOC implementadas, 100% completado
+
+**Arquitectura FASE 3 (Containerized Skills)**:
+```
+Client (SARAi Core)
+    ↓ gRPC (TLS opcional)
+SkillClient (retry + health + HMAC)
+    ↓
+┌─────────────┬─────────────┬─────────────┐
+│ skill_sql   │ skill_bash  │ skill_net   │
+│ :50051      │ :50052      │ :50053      │
+├─────────────┼─────────────┼─────────────┤
+│ Validation: │ Validation: │ Validation: │
+│ - sqlparse  │ - shlex     │ - ipaddress │
+│ - SELECT    │ - whitelist │ - whitelist │
+│   only      │   15 cmds   │   domains   │
+│ - 100 rows  │ - 10KB out  │ - 5/min rate│
+├─────────────┼─────────────┼─────────────┤
+│ Firejail:   │ Firejail:   │ Firejail:   │
+│ - caps.drop │ - caps.drop │ - caps.keep │
+│   ALL       │   ALL       │   net_raw,  │
+│ - net none  │ - net none  │   net_admin │
+│ - read-only │ - shell none│ - read-only │
+└─────────────┴─────────────┴─────────────┘
+         ↓           ↓           ↓
+     HMAC Audit Logger (SHA-256 + HMAC)
+     logs/skill_executions_YYYY-MM-DD.jsonl
+```
+
+✅ **FASE 4 COMPLETADA** (v3.6.0 - 4 Nov 2025): **Tone Memory Persistence**
+- ✅ **TonePersistenceManager**: sarai/memory/tone_persistence.py (505 LOC) - JSONL persistence con rotación automática
+- ✅ **Rotación Automática**: Cuando alcanza max_entries (1000), conserva últimas 500
+- ✅ **Backup Before Rotate**: tone_memory.jsonl.backup creado automáticamente
+- ✅ **Corruption Recovery**: Skip líneas inválidas, restaurar desde backup si disponible
+- ✅ **Validación**: Campos obligatorios (label), opcionales (valence, arousal, confidence)
+- ✅ **Integration Layer2**: core/layer2_memory/tone_memory.py actualizado con FASE 4 features
+- ✅ **Tests**: tests/test_tone_persistence.py (35 tests, 30 passed/30, 100%)
+- ✅ **Config**: config/sarai.yaml - layer2_memory section con rotation_threshold, keep_recent
+- ✅ **Total FASE 4**: 505 LOC implementadas, 35 tests, 100% completado
+
+**Arquitectura FASE 4 (Tone Memory Persistence)**:
+```
+ToneMemoryBuffer (Layer 2)
+    ↓
+TonePersistenceManager (JSONL Writer)
+    ↓
+┌─────────────────────────────────────┐
+│ state/layer2_tone_memory.jsonl      │  ← Activo
+│ state/layer2_tone_memory.jsonl.backup│  ← Último backup
+└─────────────────────────────────────┘
+
+Features:
+  • Append-only writes (performance)
+  • Rotación: 1000 entries → 500 entries (keep recent)
+  • Backup antes de rotar (automático)
+  • Validation: required=[label], optional=[valence, arousal, confidence]
+  • Recovery: Skip invalid JSON, restore from backup
+  • Thread-safe: threading.Lock en ToneMemoryBuffer
+```
+
+⏳ **PRÓXIMO/ROADMAP** (post FASE 4):
 - **FASE 5**: Omni-Loop Reflexivo (max 3 iteraciones + RAG integration) - Est: 3-4h
 - **FASE 6**: Online Tuning & LoRA (entrenamiento nocturno + swap atómico) - Est: 4-5h
+- **Documentación Equipo**: Handoff completo para dev team (POST-100% migración)
 - Benchmarks completos v3.6 con métricas de producción
 
 ---
@@ -4299,4 +4375,4 @@ Focus on clarity over perfection.""",
 _"Un skill es una estrategia de prompting, no un modelo separado.  
 Containerizar solo cuando hay riesgo de seguridad, no por conveniencia."_
 
----**Principio rector v2.11**: _"Seguridad, empatía y soberanía sobre velocidad bruta. El asistente que el hogar necesita, no el que la nube quiere vender."
+---**Principio rector v2.11**: _"Seguridad, empatía y soberanía sobre velocidad bruta. El asistente que el hogar necesita, no el que la nube quiere vender."_

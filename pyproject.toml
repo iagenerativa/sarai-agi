@@ -44,17 +44,36 @@ dev = [
 psutil = [
     "psutil>=6.0.0",
 ]
-# Dependencies for full test suite
+# Core functionality (essential for most features)
+core_deps = [
+    "requests>=2.31.0",           # RAG web search 
+    "qdrant-client>=1.7.0",      # Primary vector DB (production)
+]
+# Optional development dependencies  
+dev_optional = [
+    "chromadb>=0.4.0",           # Alternative vector DB (development)
+    "transformers>=4.40.0",      # HuggingFace models (optional backend)
+    "torch>=2.0.0",              # PyTorch models (optional backend) 
+]
+# Cloud API wrappers (completely optional)
+cloud_optional = [
+    "openai>=1.0.0",             # OpenAI API wrapper (optional cloud backend)
+]
+# Performance dependencies (CPU-intensive)  
+perf_optional = [
+    "llama-cpp-python>=0.2.0",  # GGUF models (CPU inference)
+]
+# Full test suite (everything)
 test_full = [
     "pytest>=8.2.0",
     "pytest-asyncio>=0.24.0", 
     "pytest-cov>=5.0.0",
     "requests>=2.31.0",
-    "llama-cpp-python>=0.2.0",
     "qdrant-client>=1.7.0",
     "chromadb>=0.4.0",
     "transformers>=4.40.0",
     "openai>=1.0.0",
+    "llama-cpp-python>=0.2.0",
     "torch>=2.0.0",
 ]
 

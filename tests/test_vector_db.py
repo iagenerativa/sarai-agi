@@ -18,6 +18,13 @@ import pytest
 # Import del módulo a testear
 from sarai_agi.memory.vector_db import VectorDB, get_vector_db
 
+# Mark tests that require specific vector DB backends
+# Qdrant is primary (core), ChromaDB is alternative (dev optional)
+pytestmark = [
+    pytest.mark.requires_qdrant,
+    pytest.mark.requires_chromadb
+]
+
 # ============================================================================
 # FIXTURES
 # ============================================================================

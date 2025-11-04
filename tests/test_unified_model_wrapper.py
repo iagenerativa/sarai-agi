@@ -23,10 +23,18 @@ Author: SARAi v3.5.1
 Date: November 4, 2025
 """
 
+import pytest
 
 # Mock LangChain with proper base classes
 import sys
 from unittest.mock import MagicMock, Mock, patch
+
+# Mark tests that require various optional dependencies
+pytestmark = [
+    pytest.mark.requires_transformers,
+    pytest.mark.requires_llama, 
+    pytest.mark.requires_openai
+]
 
 import numpy as np
 import pytest
