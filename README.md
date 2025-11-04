@@ -3,6 +3,7 @@
 [![CI](https://github.com/iagenerativa/sarai-agi/actions/workflows/ci.yml/badge.svg)](https://github.com/iagenerativa/sarai-agi/actions/workflows/ci.yml)
 [![Docs](https://github.com/iagenerativa/sarai-agi/actions/workflows/docs.yml/badge.svg)](https://github.com/iagenerativa/sarai-agi/actions/workflows/docs.yml)
 [![Pages](https://img.shields.io/badge/docs-GitHub%20Pages-2ea44f)](https://iagenerativa.github.io/sarai-agi/)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 > Documentación publicada: https://iagenerativa.github.io/sarai-agi/
 
@@ -225,9 +226,7 @@ pytest -vv -s
 4. Push: `git push origin feat/mi-feature`
 5. Abre Pull Request
 
-## Licencia
-
-MIT License - ver [LICENSE](LICENSE) para detalles.
+ 
 
 ## Equipo
 
