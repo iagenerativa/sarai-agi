@@ -19,14 +19,14 @@ CASCADE Tiers
 Example
 -------
 >>> from sarai_agi.cascade import ConfidenceRouter, get_think_mode_classifier
->>> 
+>>>
 >>> # Initialize router
 >>> router = ConfidenceRouter()
->>> 
+>>>
 >>> # Route based on confidence
 >>> decision = router.should_escalate("What is Python?", "Python is a language")
 >>> print(decision['target_model'])  # 'lfm2' (high confidence)
->>> 
+>>>
 >>> # Check if query needs think mode
 >>> classifier = get_think_mode_classifier()
 >>> mode = classifier.classify("Solve this complex equation: x^2 + 5x + 6 = 0")
@@ -39,7 +39,6 @@ from .confidence_router import (
     ConfidenceRouter,
     get_confidence_router,
 )
-
 from .think_mode_classifier import (
     ThinkModeClassifier,
     get_think_mode_classifier,
@@ -49,7 +48,7 @@ __all__ = [
     # Confidence Router
     "ConfidenceRouter",
     "get_confidence_router",
-    
+
     # Think Mode Classifier
     "ThinkModeClassifier",
     "get_think_mode_classifier",

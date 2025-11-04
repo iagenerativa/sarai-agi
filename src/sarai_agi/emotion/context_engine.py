@@ -45,20 +45,20 @@ Features
 Example
 -------
 >>> from sarai_agi.emotion import EmotionalContextEngine, EmotionalContext
->>> 
+>>>
 >>> engine = EmotionalContextEngine()
->>> 
+>>>
 >>> # Analyze frustration
 >>> result = engine.analyze_emotional_context(
 ...     text="No funciona, ayuda por favor!",
 ...     user_id="user123"
 ... )
->>> 
+>>>
 >>> print(result.detected_emotion)  # EmotionalContext.FRUSTRATED
 >>> print(result.confidence)  # 0.85
 >>> print(result.empathy_level)  # 0.9
 >>> print(result.text_enhancement)  # "Entiendo tu frustración. "
->>> 
+>>>
 >>> # Voice modulation
 >>> print(result.voice_modulation)
 >>> # {'speed': 0.9, 'pitch': 1.0, 'emotion_intensity': 0.9}
@@ -66,11 +66,11 @@ Example
 
 import logging
 import time
-from typing import Dict, List, Optional, Tuple, Any
-from dataclasses import dataclass, field
-from enum import Enum
 from collections import defaultdict
+from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ logger = logging.getLogger(__name__)
 class EmotionalContext(Enum):
     """
     16 emotional contexts for fine-grained detection.
-    
+
     Categories:
     - Positive: EXCITED, PLAYFUL, APPRECIATIVE, FRIENDLY
     - Negative: FRUSTRATED, COMPLAINING, CONFUSED, DOUBTFUL
@@ -110,7 +110,7 @@ class EmotionalContext(Enum):
 class CulturalContext(Enum):
     """
     8 cultural contexts for regional adaptation.
-    
+
     Includes:
     - Spanish variants: Spain, Mexico, Argentina, Colombia
     - English variants: USA, UK
@@ -129,7 +129,7 @@ class CulturalContext(Enum):
 class TimeContext(Enum):
     """
     Time-based contexts for adaptive behavior.
-    
+
     Includes:
     - Time of day: morning, afternoon, evening, night
     - Special periods: weekend, holiday, business_hours
@@ -151,7 +151,7 @@ class TimeContext(Enum):
 class EmotionalProfile:
     """
     User emotional profile with learning history.
-    
+
     Attributes:
         user_id: Unique user identifier
         dominant_emotion: Most frequent emotion (last 10 interactions)
@@ -172,7 +172,7 @@ class EmotionalProfile:
 class EmotionalResponse:
     """
     Complete emotional analysis result.
-    
+
     Attributes:
         detected_emotion: Primary detected emotion
         confidence: Detection confidence (0.0-1.0)
@@ -198,20 +198,20 @@ class EmotionalResponse:
 class ContextualEmbeddingEngine:
     """
     Keyword-based embedding engine for emotion and culture detection.
-    
+
     Uses keyword matching with confidence scoring. More sophisticated
     implementations could use BERT embeddings or fine-tuned models.
     """
-    
+
     def __init__(self):
         """Initialize keyword dictionaries."""
         self.emotional_keywords = self._initialize_emotional_keywords()
         self.cultural_indicators = self._initialize_cultural_indicators()
-    
+
     def _initialize_emotional_keywords(self) -> Dict[EmotionalContext, List[str]]:
         """
         Initialize emotional keywords dictionary.
-        
+
         Returns:
             Dict mapping EmotionalContext to keyword lists
         """
@@ -257,11 +257,11 @@ class ContextualEmbeddingEngine:
                 "bromea", "jugar"
             ]
         }
-    
+
     def _initialize_cultural_indicators(self) -> Dict[CulturalContext, List[str]]:
         """
         Initialize cultural indicators dictionary.
-        
+
         Returns:
             Dict mapping CulturalContext to indicator lists
         """
@@ -289,7 +289,7 @@ class ContextualEmbeddingEngine:
                 "cheers", "mate", "brilliant", "lovely", "whilst"
             ]
         }
-    
+
     def detect_contextual_emotion(
         self,
         text: str,
@@ -297,39 +297,39 @@ class ContextualEmbeddingEngine:
     ) -> List[Tuple[EmotionalContext, float]]:
         """
         Detect emotions with confidence scoring.
-        
+
         Args:
             text: Input text to analyze
             user_profile: Optional user profile for boosting
-            
+
         Returns:
             List of (EmotionalContext, confidence) tuples, sorted by confidence
             (top 3 emotions)
         """
         text_lower = text.lower()
         scores = defaultdict(float)
-        
+
         # Score by keyword matching
         for emotion, keywords in self.emotional_keywords.items():
             matches = sum(1 for kw in keywords if kw in text_lower)
             if matches > 0:
                 # Confidence = matches / total keywords (normalized)
                 scores[emotion] = min(matches / len(keywords) * 2, 1.0)
-        
+
         # Boost if matches user's dominant emotion
         if user_profile and scores:
             for emotion, score in scores.items():
                 if emotion == user_profile.dominant_emotion:
                     scores[emotion] = min(score * 1.3, 1.0)
-        
+
         # Default to neutral if no matches
         if not scores:
             scores[EmotionalContext.NEUTRAL] = 0.8
-        
+
         # Sort by score descending
         sorted_emotions = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         return sorted_emotions[:3]  # Top 3
-    
+
     def analyze_cultural_context(
         self,
         text: str,
@@ -337,16 +337,16 @@ class ContextualEmbeddingEngine:
     ) -> Tuple[CulturalContext, float]:
         """
         Analyze cultural context from text.
-        
+
         Args:
             text: Input text to analyze
             user_profile: Optional user profile for fallback
-            
+
         Returns:
             Tuple of (CulturalContext, confidence)
         """
         text_lower = text.lower()
-        
+
         # Check cultural indicators
         for culture, indicators in self.cultural_indicators.items():
             matches = sum(1 for ind in indicators if ind in text_lower)
@@ -354,29 +354,29 @@ class ContextualEmbeddingEngine:
                 # Confidence boosted by match count
                 confidence = min(matches / len(indicators) * 2, 1.0)
                 return (culture, confidence)
-        
+
         # Fallback to user profile
         if user_profile:
             return (user_profile.cultural_preference, 0.5)
-        
+
         # Default to Spain (neutral Spanish)
         return (CulturalContext.SPAIN, 0.3)
-    
+
     def analyze_time_context(self) -> Tuple[TimeContext, float]:
         """
         Analyze current time context.
-        
+
         Returns:
             Tuple of (TimeContext, confidence)
         """
         now = datetime.now()
         hour = now.hour
         weekday = now.weekday()  # 0=Monday, 6=Sunday
-        
+
         # Weekend detection (Saturday, Sunday)
         if weekday >= 5:
             return (TimeContext.WEEKEND, 1.0)
-        
+
         # Time of day
         if 6 <= hour < 12:
             return (TimeContext.MORNING, 1.0)
@@ -395,7 +395,7 @@ class ContextualEmbeddingEngine:
 class EmotionalContextEngine:
     """
     Main emotional context analysis engine.
-    
+
     Integrates:
     - Emotional detection (16 contexts)
     - Cultural adaptation (8 contexts)
@@ -403,19 +403,19 @@ class EmotionalContextEngine:
     - User profiling
     - Voice modulation
     - Text enhancement
-    
+
     Thread Safety: Not thread-safe. Use from single thread or add locks.
     """
-    
+
     def __init__(self):
         """Initialize engine with embedding engine and user profiles."""
         self.embedding_engine = ContextualEmbeddingEngine()
         self.user_profiles: Dict[str, EmotionalProfile] = {}
-        
+
         # Statistics
         self.analysis_count = 0
         self.avg_confidence = 0.0
-    
+
     def analyze_emotional_context(
         self,
         text: str,
@@ -424,7 +424,7 @@ class EmotionalContextEngine:
     ) -> EmotionalResponse:
         """
         Complete emotional context analysis.
-        
+
         Pipeline:
         1. Detect emotion from text
         2. Analyze cultural context
@@ -433,58 +433,58 @@ class EmotionalContextEngine:
         5. Generate voice modulation
         6. Create text enhancement
         7. Update user profile
-        
+
         Args:
             text: Input text to analyze
             user_id: User identifier for profiling
             language: Language code (currently only 'es' supported)
-            
+
         Returns:
             EmotionalResponse with complete analysis
         """
         self.analysis_count += 1
-        
+
         # Get or create user profile
         user_profile = self.user_profiles.get(user_id)
-        
+
         # 1. Detect emotion
         emotions = self.embedding_engine.detect_contextual_emotion(text, user_profile)
         detected_emotion, confidence = emotions[0]
-        
+
         # 2. Cultural context
         cultural_context, cultural_confidence = (
             self.embedding_engine.analyze_cultural_context(text, user_profile)
         )
-        
+
         # 3. Time context
         time_context, time_confidence = self.embedding_engine.analyze_time_context()
-        
+
         # 4. Empathy level
         empathy_level = self._calculate_empathy_level(
             detected_emotion, confidence, time_context
         )
-        
+
         # 5. Voice modulation
         voice_modulation = self._calculate_voice_modulation(
             detected_emotion, empathy_level
         )
-        
+
         # 6. Text enhancement
         text_enhancement = self._generate_text_enhancement(
             detected_emotion, cultural_context
         )
-        
+
         # 7. Update user profile
         self._update_user_profile(
             user_id, detected_emotion, cultural_context, confidence
         )
-        
+
         # Update average confidence
         self.avg_confidence = (
             (self.avg_confidence * (self.analysis_count - 1) + confidence)
             / self.analysis_count
         )
-        
+
         return EmotionalResponse(
             detected_emotion=detected_emotion,
             confidence=confidence,
@@ -494,7 +494,7 @@ class EmotionalContextEngine:
             voice_modulation=voice_modulation,
             text_enhancement=text_enhancement
         )
-    
+
     def _calculate_empathy_level(
         self,
         emotion: EmotionalContext,
@@ -503,34 +503,34 @@ class EmotionalContextEngine:
     ) -> float:
         """
         Calculate appropriate empathy level.
-        
+
         Factors:
         - Base: 0.7
         - +0.2 for negative emotions (frustrated, confused)
         - +0.1 for night/weekend
         - Modulated by detection confidence
-        
+
         Args:
             emotion: Detected emotion
             confidence: Detection confidence
             time_context: Current time context
-            
+
         Returns:
             Empathy level (0.0-1.0)
         """
         base_empathy = 0.7
-        
+
         # Boost for negative emotions
         if emotion in [EmotionalContext.FRUSTRATED, EmotionalContext.CONFUSED]:
             base_empathy += 0.2
-        
+
         # Boost for night/weekend (more personal time)
         if time_context in [TimeContext.NIGHT, TimeContext.WEEKEND]:
             base_empathy += 0.1
-        
+
         # Modulate by confidence
         return min(base_empathy * confidence, 1.0)
-    
+
     def _calculate_voice_modulation(
         self,
         emotion: EmotionalContext,
@@ -538,16 +538,16 @@ class EmotionalContextEngine:
     ) -> Dict[str, float]:
         """
         Calculate voice modulation parameters.
-        
+
         Parameters:
         - speed: 0.9-1.2 (slow to fast)
         - pitch: 0.9-1.1 (low to high)
         - emotion_intensity: 0.0-1.0 (neutral to expressive)
-        
+
         Args:
             emotion: Detected emotion
             empathy: Calculated empathy level
-            
+
         Returns:
             Dict with speed, pitch, emotion_intensity
         """
@@ -556,7 +556,7 @@ class EmotionalContextEngine:
             "pitch": 1.0,
             "emotion_intensity": 0.7
         }
-        
+
         # Adjust for emotion
         if emotion == EmotionalContext.EXCITED:
             base_modulation["speed"] = 1.1
@@ -571,9 +571,9 @@ class EmotionalContextEngine:
         elif emotion == EmotionalContext.FORMAL:
             base_modulation["speed"] = 0.95
             base_modulation["emotion_intensity"] = 0.5
-        
+
         return base_modulation
-    
+
     def _generate_text_enhancement(
         self,
         emotion: EmotionalContext,
@@ -581,11 +581,11 @@ class EmotionalContextEngine:
     ) -> str:
         """
         Generate text prefix for emotional response.
-        
+
         Args:
             emotion: Detected emotion
             culture: Cultural context (currently unused, for future)
-            
+
         Returns:
             Text prefix string
         """
@@ -598,9 +598,9 @@ class EmotionalContextEngine:
             EmotionalContext.EXCITED: "¡Me alegra tu entusiasmo! ",
             EmotionalContext.DOUBTFUL: "Entiendo tus dudas. Veamos: "
         }
-        
+
         return enhancements.get(emotion, "")
-    
+
     def _update_user_profile(
         self,
         user_id: str,
@@ -610,7 +610,7 @@ class EmotionalContextEngine:
     ):
         """
         Update or create user profile.
-        
+
         Args:
             user_id: User identifier
             emotion: Latest detected emotion
@@ -626,32 +626,32 @@ class EmotionalContextEngine:
                 avg_empathy_level=0.7,
                 last_interaction=time.time()
             )
-        
+
         profile = self.user_profiles[user_id]
-        
+
         # Add to history
         profile.interaction_history.append((emotion, confidence))
         profile.last_interaction = time.time()
-        
+
         # Keep only last 20 interactions
         if len(profile.interaction_history) > 20:
             profile.interaction_history = profile.interaction_history[-20:]
-        
+
         # Update dominant emotion (last 10 interactions)
         emotion_counts = defaultdict(int)
         for emo, _ in profile.interaction_history[-10:]:
             emotion_counts[emo] += 1
-        
+
         if emotion_counts:
             profile.dominant_emotion = max(
                 emotion_counts.items(),
                 key=lambda x: x[1]
             )[0]
-    
+
     def get_emotional_insights(self) -> Dict[str, Any]:
         """
         Get emotional analysis insights and statistics.
-        
+
         Returns:
             Dict with:
             - analysis_count: Total analyses performed
@@ -660,7 +660,7 @@ class EmotionalContextEngine:
             - active_profiles: Users active in last hour
         """
         current_time = time.time()
-        
+
         return {
             "analysis_count": self.analysis_count,
             "confidence_avg": self.avg_confidence,
@@ -670,14 +670,14 @@ class EmotionalContextEngine:
                 if current_time - p.last_interaction < 3600
             )
         }
-    
+
     def get_user_profile(self, user_id: str) -> Optional[EmotionalProfile]:
         """
         Get user profile if exists.
-        
+
         Args:
             user_id: User identifier
-            
+
         Returns:
             EmotionalProfile or None
         """
@@ -691,7 +691,7 @@ class EmotionalContextEngine:
 def create_emotional_context_engine() -> EmotionalContextEngine:
     """
     Create EmotionalContextEngine instance.
-    
+
     Returns:
         Initialized EmotionalContextEngine
     """

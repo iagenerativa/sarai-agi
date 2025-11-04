@@ -8,14 +8,14 @@ Provides high-performance specialized agents for:
 Version: v3.5.1
 """
 
-from .vision import VisionAgent, create_vision_agent
 from .code_expert import CodeExpertAgent, get_code_expert_agent, validate_syntax
+from .vision import VisionAgent, create_vision_agent
 
 __all__ = [
     # Vision Agent
     "VisionAgent",
     "create_vision_agent",
-    
+
     # Code Expert Agent
     "CodeExpertAgent",
     "get_code_expert_agent",

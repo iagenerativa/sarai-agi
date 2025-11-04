@@ -20,7 +20,7 @@ import statistics
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 try:
     import psutil
@@ -136,7 +136,7 @@ class DynamicQuantizationSelector:
 
         tokens_estimated = max(1, len(prompt) // 4)
         quality_request = quality_request if quality_request is not None else task_complexity
-        
+
         # Auto-detect RAM if not provided and psutil available
         if ram_available_gb is None:
             if HAS_PSUTIL:
@@ -253,7 +253,7 @@ class DynamicQuantizationSelector:
             return 0.5
 
         success_rates = []
-        for level, hist in self.usage_history.items():
+        for hist in self.usage_history.values():
             count = hist.get("count", 0)
             success = hist.get("success_rate", 0)
             if count <= 0:

@@ -42,10 +42,10 @@ Features
 Example
 -------
 >>> from sarai_agi.telemetry import AdvancedTelemetry
->>> 
+>>>
 >>> telemetry = AdvancedTelemetry()
 >>> telemetry.start_monitoring()
->>> 
+>>>
 >>> # Record interaction
 >>> telemetry.record_interaction(
 ...     user_id="user_123",
@@ -55,27 +55,28 @@ Example
 ...     security_validated=True,
 ...     processing_time_ms=250.0
 ... )
->>> 
+>>>
 >>> # Get metrics
 >>> metrics = telemetry.get_comprehensive_metrics(time_window_minutes=60)
 >>> print(metrics['counters']['interactions_total'])  # 1
->>> 
+>>>
 >>> # Export to file
 >>> telemetry.export_metrics("dashboard_metrics.json")
->>> 
+>>>
 >>> # Stop monitoring
 >>> telemetry.stop()
 """
 
-import logging
-import time
-import psutil
-import threading
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, asdict
-from enum import Enum
-from collections import defaultdict, deque
 import json
+import logging
+import threading
+import time
+from collections import defaultdict, deque
+from dataclasses import asdict, dataclass
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+import psutil
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +88,7 @@ logger = logging.getLogger(__name__)
 class MetricType(Enum):
     """
     Types of telemetry metrics.
-    
+
     Types:
         COUNTER: Monotonically increasing (total requests, errors, etc.)
         GAUGE: Can go up or down (memory usage, active connections)
@@ -103,7 +104,7 @@ class MetricType(Enum):
 class AlertLevel(Enum):
     """
     Alert severity levels.
-    
+
     Levels:
         INFO: Informational, no action required
         WARNING: Warning, should be monitored
@@ -124,7 +125,7 @@ class AlertLevel(Enum):
 class TelemetryMetric:
     """
     Represents a telemetry metric.
-    
+
     Attributes:
         name: Metric name (e.g., "cpu_usage_percent")
         value: Metric value
@@ -147,7 +148,7 @@ class TelemetryMetric:
 class SystemAlert:
     """
     Represents a system alert.
-    
+
     Attributes:
         level: Alert severity level
         metric_name: Name of metric that triggered alert
@@ -171,16 +172,16 @@ class SystemAlert:
 class MetricsCollector:
     """
     Collects and manages telemetry metrics.
-    
+
     Thread Safety: Uses RLock for concurrent access protection.
     Window Size: Maintains last 1000 values per metric.
     """
-    
+
     def __init__(self):
         """Initialize metrics collector with predefined counters and gauges."""
         self.metrics: Dict[str, List[TelemetryMetric]] = defaultdict(list)
         self.metric_windows = defaultdict(lambda: deque(maxlen=1000))
-        
+
         # Predefined counters (monotonically increasing)
         self.counters = {
             "interactions_total": 0,
@@ -189,7 +190,7 @@ class MetricsCollector:
             "cache_hits_total": 0,
             "cache_misses_total": 0
         }
-        
+
         # Predefined gauges (can go up or down)
         self.gauges = {
             "active_connections": 0,
@@ -197,9 +198,9 @@ class MetricsCollector:
             "cpu_usage_percent": 0,
             "queue_length": 0
         }
-        
+
         self.lock = threading.RLock()
-    
+
     def record_metric(
         self,
         name: str,
@@ -210,7 +211,7 @@ class MetricsCollector:
     ):
         """
         Record a metric.
-        
+
         Args:
             name: Metric name
             value: Metric value
@@ -228,18 +229,18 @@ class MetricsCollector:
                 unit=unit,
                 description=description
             )
-            
+
             self.metrics[name].append(metric)
             self.metric_windows[name].append(value)
-            
+
             # Update counters/gauges if predefined
             if name in self.gauges:
                 self.gauges[name] = value
-    
+
     def increment_counter(self, name: str, amount: float = 1.0):
         """
         Increment a counter metric.
-        
+
         Args:
             name: Counter name
             amount: Amount to increment (default: 1.0)
@@ -247,7 +248,7 @@ class MetricsCollector:
         with self.lock:
             if name in self.counters:
                 self.counters[name] += amount
-    
+
     def get_metric_summary(
         self,
         name: str,
@@ -255,11 +256,11 @@ class MetricsCollector:
     ) -> Dict[str, Any]:
         """
         Get statistical summary of a metric within time window.
-        
+
         Args:
             name: Metric name
             time_window_minutes: Time window in minutes (default: 60)
-            
+
         Returns:
             Dict with:
             - count: Number of values in window
@@ -273,19 +274,19 @@ class MetricsCollector:
         with self.lock:
             if name not in self.metrics:
                 return {}
-            
+
             # Filter by time window
             cutoff_time = time.time() - (time_window_minutes * 60)
             recent_metrics = [
                 m for m in self.metrics[name]
                 if m.timestamp >= cutoff_time
             ]
-            
+
             if not recent_metrics:
                 return {}
-            
+
             values = [m.value for m in recent_metrics]
-            
+
             return {
                 "count": len(values),
                 "min": min(values),
@@ -295,15 +296,15 @@ class MetricsCollector:
                 "p95": self._percentile(values, 0.95),
                 "p99": self._percentile(values, 0.99)
             }
-    
+
     def _percentile(self, values: List[float], percentile: float) -> float:
         """
         Calculate percentile of values.
-        
+
         Args:
             values: List of values
             percentile: Percentile to calculate (0.0-1.0)
-            
+
         Returns:
             Percentile value
         """
@@ -321,37 +322,37 @@ class MetricsCollector:
 class SystemMonitor:
     """
     Monitors system health and generates alerts.
-    
+
     Monitors:
     - CPU usage (threshold: 85%)
     - Memory usage (threshold: 12GB = 12000 MB)
     - Disk usage
     - Network I/O
-    
+
     Background Thread: Runs monitoring loop every 30 seconds.
     Alert History: Maintains last 100 alerts.
     """
-    
+
     def __init__(self, metrics_collector: MetricsCollector):
         """
         Initialize system monitor.
-        
+
         Args:
             metrics_collector: MetricsCollector instance to use
         """
         self.metrics = metrics_collector
         self.monitoring = False
         self.monitor_thread: Optional[threading.Thread] = None
-        
+
         # Thresholds for alerts
         self.thresholds = {
             "cpu_usage_percent": 85.0,  # %
             "memory_usage_mb": 12000,   # 12GB
             "queue_length": 100
         }
-        
+
         self.alerts: List[SystemAlert] = []
-    
+
     def start_monitoring(self):
         """Start continuous system monitoring."""
         if not self.monitoring:
@@ -362,14 +363,14 @@ class SystemMonitor:
             )
             self.monitor_thread.start()
             logger.info("✅ System monitoring started")
-    
+
     def stop_monitoring(self):
         """Stop system monitoring."""
         self.monitoring = False
         if self.monitor_thread:
             self.monitor_thread.join(timeout=5)
         logger.info("System monitoring stopped")
-    
+
     def _monitoring_loop(self):
         """Continuous monitoring loop (internal)."""
         while self.monitoring:
@@ -380,23 +381,23 @@ class SystemMonitor:
             except Exception as e:
                 logger.error(f"Error in monitoring loop: {e}")
                 time.sleep(60)  # Backoff on error
-    
+
     def _collect_system_metrics(self):
         """Collect system metrics (internal)."""
         # CPU usage
         cpu_percent = psutil.cpu_percent(interval=1)
         self.metrics.record_metric("cpu_usage_percent", cpu_percent, unit="%")
-        
+
         # Memory usage
         memory = psutil.virtual_memory()
         memory_mb = memory.used / (1024 * 1024)
         self.metrics.record_metric("memory_usage_mb", memory_mb, unit="MB")
-        
+
         # Disk usage
         disk = psutil.disk_usage('/')
         disk_percent = disk.percent
         self.metrics.record_metric("disk_usage_percent", disk_percent, unit="%")
-        
+
         # Network I/O (if available)
         try:
             network = psutil.net_io_counters()
@@ -412,13 +413,13 @@ class SystemMonitor:
             )
         except Exception:
             pass  # Network stats may not be available
-    
+
     def _check_thresholds(self):
         """Check thresholds and generate alerts (internal)."""
         for metric_name, threshold in self.thresholds.items():
             if metric_name in self.metrics.gauges:
                 current_value = self.metrics.gauges[metric_name]
-                
+
                 if current_value > threshold:
                     self._create_alert(
                         AlertLevel.WARNING,
@@ -426,7 +427,7 @@ class SystemMonitor:
                         current_value,
                         threshold
                     )
-    
+
     def _create_alert(
         self,
         level: AlertLevel,
@@ -436,7 +437,7 @@ class SystemMonitor:
     ):
         """
         Create and record an alert (internal).
-        
+
         Args:
             level: Alert severity level
             metric_name: Name of metric that triggered alert
@@ -451,10 +452,10 @@ class SystemMonitor:
             current_value=current_value,
             threshold=threshold
         )
-        
+
         self.alerts.append(alert)
         logger.warning(f"🚨 Alert: {alert.message}")
-        
+
         # Keep only last 100 alerts
         if len(self.alerts) > 100:
             self.alerts = self.alerts[-100:]
@@ -467,34 +468,34 @@ class SystemMonitor:
 class AdvancedTelemetry:
     """
     Advanced telemetry and monitoring system for SARAi AGI.
-    
+
     Integrates:
     - Metrics collection (counters, gauges)
     - System monitoring (CPU, memory, disk, network)
     - Auto-alerts with configurable thresholds
     - Metrics export for dashboards
-    
+
     Thread Safety: All components are thread-safe.
     Background Monitoring: Auto-starts monitoring thread.
     """
-    
+
     def __init__(self):
         """Initialize advanced telemetry system."""
         self.metrics_collector = MetricsCollector()
         self.system_monitor = SystemMonitor(self.metrics_collector)
-        
+
         self.start_time = time.time()
-        
+
         logger.info("✅ Advanced Telemetry System initialized")
-    
+
     def start_monitoring(self):
         """Start system monitoring (CPU, memory, disk, network)."""
         self.system_monitor.start_monitoring()
-    
+
     def stop(self):
         """Stop telemetry system and monitoring."""
         self.system_monitor.stop_monitoring()
-    
+
     def record_interaction(
         self,
         user_id: str,
@@ -506,7 +507,7 @@ class AdvancedTelemetry:
     ):
         """
         Record an interaction with full context.
-        
+
         Args:
             user_id: User identifier
             text_length: Length of input text (characters)
@@ -520,7 +521,7 @@ class AdvancedTelemetry:
             "emotion": emotional_context,
             "user_id": user_id
         }
-        
+
         # Record processing time
         self.metrics_collector.record_metric(
             "interaction_processing_time_ms",
@@ -528,7 +529,7 @@ class AdvancedTelemetry:
             labels=labels,
             unit="ms"
         )
-        
+
         # Record text length
         self.metrics_collector.record_metric(
             "interaction_text_length",
@@ -536,35 +537,35 @@ class AdvancedTelemetry:
             labels=labels,
             unit="chars"
         )
-        
+
         # Update counters
         self.metrics_collector.increment_counter("interactions_total")
-        
+
         if not security_validated:
             self.metrics_collector.increment_counter("security_threats_total")
-    
+
     def record_cache_hit(self):
         """Record a cache hit."""
         self.metrics_collector.increment_counter("cache_hits_total")
-    
+
     def record_cache_miss(self):
         """Record a cache miss."""
         self.metrics_collector.increment_counter("cache_misses_total")
-    
+
     def record_error(self):
         """Record an error occurrence."""
         self.metrics_collector.increment_counter("errors_total")
-    
+
     def get_comprehensive_metrics(
         self,
         time_window_minutes: int = 60
     ) -> Dict[str, Any]:
         """
         Get comprehensive metrics summary.
-        
+
         Args:
             time_window_minutes: Time window for aggregation (default: 60)
-            
+
         Returns:
             Dict with:
             - uptime_hours: System uptime in hours
@@ -578,7 +579,7 @@ class AdvancedTelemetry:
             "interaction_processing_time_ms",
             time_window_minutes
         )
-        
+
         return {
             "uptime_hours": (time.time() - self.start_time) / 3600,
             "counters": self.metrics_collector.counters.copy(),
@@ -587,26 +588,26 @@ class AdvancedTelemetry:
             "alerts_count": len(self.system_monitor.alerts),
             "recent_alerts": [asdict(a) for a in self.system_monitor.alerts[-5:]]
         }
-    
+
     def export_metrics(self, filename: str = "metrics_export.json") -> bool:
         """
         Export metrics to JSON file for dashboards.
-        
+
         Args:
             filename: Output filename (default: "metrics_export.json")
-            
+
         Returns:
             True if successful, False otherwise
         """
         try:
             metrics_data = self.get_comprehensive_metrics()
-            
+
             with open(filename, 'w') as f:
                 json.dump(metrics_data, f, indent=2, default=str)
-            
+
             logger.info(f"✅ Metrics exported to {filename}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Error exporting metrics: {e}")
             return False
@@ -619,7 +620,7 @@ class AdvancedTelemetry:
 def create_advanced_telemetry() -> AdvancedTelemetry:
     """
     Create AdvancedTelemetry instance.
-    
+
     Returns:
         Initialized AdvancedTelemetry
     """

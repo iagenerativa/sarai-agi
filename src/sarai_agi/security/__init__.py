@@ -13,7 +13,7 @@ Components:
 
 Example:
     >>> from sarai_agi.security import SecurityResilienceSystem
-    >>> 
+    >>>
     >>> system = SecurityResilienceSystem()
     >>> result = system.process_secure_interaction(
     ...     text="Hola, ¿cómo estás?",
@@ -23,14 +23,14 @@ Example:
 """
 
 from .resilience import (
-    SecurityResilienceSystem,
-    MaliciousInputDetector,
-    AutomaticFallbackSystem,
-    SecurityLevel,
     AttackType,
+    AutomaticFallbackSystem,
+    MaliciousInputDetector,
+    SecurityLevel,
+    SecurityResilienceSystem,
     SecurityThreat,
     SystemResilienceMetrics,
-    create_security_resilience_system
+    create_security_resilience_system,
 )
 
 __all__ = [
