@@ -1,9 +1,11 @@
 # 📊 Resumen Ejecutivo: Migración SARAi_v2 → SARAi_AGI
 
+**Repository:** [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)  
 **Fecha**: 4 de noviembre de 2025  
 **Versión**: 3.5.1  
 **Estado**: ✅ Base Fundamental Completada (60% estimado)  
-**Commits**: 4 (6cbdc33, 3a3e68d, be0139d, 9046ae6, 41a142c)
+**Commits**: 9 (6cbdc33 → 7951e27)  
+**Tags**: v3.5.1, v3.5.1-migration-milestone
 
 ---
 
@@ -381,9 +383,10 @@ be0139d - feat(mcp): migrate Meta Control Plane with MoE skills routing
 
 ## 📞 Contacto y Recursos
 
-- **Repositorio**: `SARAi_v2/SARAi_AGI` (branch: `main`)
+- **Repositorio GitHub**: [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)
+- **Branch principal**: `main`
 - **Documentación**: Ver `/docs` para arquitectura detallada
-- **Issues**: GitHub Issues (cuando se publique)
+- **Issues**: [GitHub Issues](https://github.com/iagenerativa/sarai-agi/issues)
 - **Contribuciones**: Ver `CONTRIBUTING.md`
 
 ---
@@ -393,6 +396,9 @@ be0139d - feat(mcp): migrate Meta Control Plane with MoE skills routing
 ```
 SARAi_AGI v3.5.1 Migration Status
 ════════════════════════════════════════════════════════════════
+
+Repository: github.com/iagenerativa/sarai-agi
+Status: ✅ Published • 35/35 tests passing • 9 commits
 
 ✅ COMPLETADO (56%)         ⏳ PENDIENTE (44%)
 ┌─────────────────────┐    ┌─────────────────────┐
@@ -408,8 +414,6 @@ SARAi_AGI v3.5.1 Migration Status
 ├─────────────────────┤    ├─────────────────────┤
 │ TOTAL:    4,485 LOC │    │ TOTAL:   ~3,175 LOC │
 └─────────────────────┘    └─────────────────────┘
-
-Tests: 35/35 passing (100%)  •  Commits: 5  •  Branches: main
 ```
 
 ---

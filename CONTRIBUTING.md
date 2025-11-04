@@ -1,5 +1,7 @@
 # Contributing to SARAi_AGI
 
+**Repository:** [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)
+
 ¡Gracias por tu interés en contribuir a SARAi_AGI! Este documento describe el flujo de trabajo y convenciones del proyecto.
 
 ## Flujo de Trabajo
@@ -9,9 +11,9 @@
 ```bash
 # Fork el repositorio en GitHub
 # Luego clona tu fork
-git clone https://github.com/TU_USUARIO/SARAi_AGI.git
-cd SARAi_AGI
-git remote add upstream https://github.com/iagenerativa/SARAi_AGI.git
+git clone https://github.com/TU_USUARIO/sarai-agi.git
+cd sarai-agi
+git remote add upstream https://github.com/iagenerativa/sarai-agi.git
 ```
 
 ### 2. Crear Branch de Feature
