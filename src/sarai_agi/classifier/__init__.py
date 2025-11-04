@@ -1,9 +1,9 @@
 """Módulo de clasificación de intenciones (TRM Classifier)."""
 
 from .trm import (
+    HAS_TORCH,
     TRMClassifierSimulated,
     create_trm_classifier,
-    HAS_TORCH,
 )
 
 __all__ = [

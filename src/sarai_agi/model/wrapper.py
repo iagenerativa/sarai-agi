@@ -111,9 +111,12 @@ import os
 import re
 import time
 from abc import abstractmethod
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Union
 
 import yaml
+
+if TYPE_CHECKING:
+    import numpy as np
 
 # LangChain imports (optional)
 try:
@@ -337,11 +340,11 @@ class GGUFModelWrapper(UnifiedModelWrapper):
         """Load GGUF model with llama-cpp-python."""
         try:
             from llama_cpp import Llama
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "llama-cpp-python not installed. "
                 "Install with: pip install llama-cpp-python"
-            )
+            ) from e
 
         model_path = self.config["model_path"]
 
@@ -422,11 +425,11 @@ class TransformersModelWrapper(UnifiedModelWrapper):
         """Load model with Transformers + 4-bit quantization."""
         try:
             from transformers import AutoModelForCausalLM, AutoTokenizer
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "transformers not installed. "
                 "Install with: pip install transformers"
-            )
+            ) from e
 
         repo_id = self.config["repo_id"]
         load_in_4bit = self.config.get("load_in_4bit", True)
@@ -518,11 +521,11 @@ class MultimodalModelWrapper(UnifiedModelWrapper):
         """Load multimodal model."""
         try:
             from transformers import AutoModelForCausalLM, AutoProcessor
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "transformers not installed. "
                 "Install with: pip install transformers"
-            )
+            ) from e
 
         repo_id = self.config["repo_id"]
 
@@ -711,7 +714,7 @@ class OllamaModelWrapper(UnifiedModelWrapper):
             response.raise_for_status()
             logger.info(f"Ollama server available at {api_url}")
         except Exception as e:
-            raise ConnectionError(f"Ollama server not available: {e}")
+            raise ConnectionError(f"Ollama server not available: {e}") from e
 
         tags_payload = response.json() if response.content else {}
         available_models = [
@@ -882,11 +885,11 @@ class OpenAIAPIWrapper(UnifiedModelWrapper):
         """Generate text via OpenAI API."""
         try:
             import openai
-        except ImportError:
+        except ImportError as e:
             raise ImportError(
                 "openai not installed. "
                 "Install with: pip install openai"
-            )
+            ) from e
 
         # Configure client
         api_url = self.config.get("api_url", "https://api.openai.com/v1")
@@ -1109,7 +1112,7 @@ class EmbeddingModelWrapper(UnifiedModelWrapper):
         else:
             return list(embeddings)  # List of 1D arrays
 
-    def get_embedding(self, text: str) -> 'np.ndarray':
+    def get_embedding(self, text: str) -> Union[Any, "np.ndarray"]:
         """
         Convenience method to get embedding for a text.
 
@@ -1117,7 +1120,7 @@ class EmbeddingModelWrapper(UnifiedModelWrapper):
         """
         return self.invoke(text)
 
-    def batch_encode(self, texts: List[str]) -> 'np.ndarray':
+    def batch_encode(self, texts: List[str]) -> Union[Any, "np.ndarray"]:
         """
         Process batch of texts and return 2D matrix.
 

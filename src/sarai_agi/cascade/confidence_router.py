@@ -58,7 +58,7 @@ Version: v3.5.1
 """
 
 import re
-from typing import Dict, Optional, Any
+from typing import Any, Dict, Optional
 
 
 class ConfidenceRouter:
