@@ -70,3 +70,4 @@ test_input.wav
 
 # MkDocs build output
 site/
+.venv-py311-backup/
