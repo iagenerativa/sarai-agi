@@ -2,6 +2,11 @@ site_name: SARAi_AGI Docs
 site_url: https://iagenerativa.github.io/sarai-agi/
 repo_url: https://github.com/iagenerativa/sarai-agi
 repo_name: iagenerativa/sarai-agi
+
+copyright: >
+  Copyright &copy; 2025 iagenerativa -
+  <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+
 theme:
   name: material
   language: es
