@@ -1,0 +1,10 @@
+# Directorio para logs estructurados
+
+Todos los logs deben usar formato JSONL con hash sidecar (SHA-256 o HMAC) para auditabilidad.
+
+## Convenciones
+
+- `<fecha>.jsonl`: Log principal del día
+- `<fecha>.jsonl.sha256`: Hash de cada línea para verificación de integridad
+- Rotación automática diaria
+- Compresión de logs antiguos (>7 días) con `zstd -19`

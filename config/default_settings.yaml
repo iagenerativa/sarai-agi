@@ -1,0 +1,34 @@
+# Configuración por defecto para SARAi_AGI
+# Estas opciones se ajustarán conforme se migren los módulos desde SARAi_v2.
+
+version_base: "3.5.1"
+
+pipeline:
+  enable_parallelization: true
+  min_input_length: 20
+  max_workers: null  # auto-detectar
+
+quantizacion:
+  heuristicas:
+    peso_tokens: 0.35
+    peso_complejidad: 0.35
+    peso_historial: 0.20
+    peso_ram: 0.10
+  calidades:
+    IQ3_XXS:
+      ram_mb: 450
+      precision_estim: 0.78
+    Q4_K_M:
+      ram_mb: 760
+      precision_estim: 0.92
+    Q5_K_M:
+      ram_mb: 980
+      precision_estim: 0.96
+
+telemetria:
+  habilitada: true
+  ventana_segundos: 30
+
+seguridad:
+  sanitizacion_inputs: true
+  deteccion_amenazas: true

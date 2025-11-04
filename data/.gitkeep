@@ -1,0 +1,5 @@
+# Directorio para datasets y datos estáticos
+
+Contiene datos de entrenamiento, validación y datasets sintéticos.
+
+**No versionar datasets grandes.** Usar Git LFS o descarga externa.

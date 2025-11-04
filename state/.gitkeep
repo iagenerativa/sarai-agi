@@ -1,0 +1,9 @@
+# Directorio para estado persistente
+
+Contiene:
+- Buffers de memoria (tone_memory, feedback_log, etc.)
+- Cache de embeddings
+- Estado de MCP y TRM
+- Historial de cuantización
+
+Formato preferido: JSONL con timestamping
