@@ -62,7 +62,7 @@ Example Usage
 >>>
 >>> # Embeddings example
 >>> embedder = get_model("embedding_gemma")
->>> vector = embedder.invoke("Sample text")  # Returns np.ndarray
+>>> vector = embedder.invoke("Sample text")  # Returns numpy array (if numpy available)
 
 Architecture
 ------------
@@ -117,6 +117,13 @@ import yaml
 
 if TYPE_CHECKING:
     import numpy as np
+else:
+    # Para type hints en tiempo de ejecución
+    try:
+        import numpy as np
+    except ImportError:
+        # Fallback para cuando numpy no está disponible
+        np = None  # type: ignore
 
 # LangChain imports (optional)
 try:
@@ -224,7 +231,7 @@ class UnifiedModelWrapper(Runnable):
             return self._invoke_sync(input, config)
         except Exception as e:
             logger.error(f"Error invoking {self.name}: {e}")
-            raise
+            raise RuntimeError(f"Model invocation failed for {self.name}") from e
 
     async def ainvoke(self, input: InputType, config: Optional[Dict] = None) -> OutputType:
         """
@@ -970,8 +977,8 @@ class EmbeddingModelWrapper(UnifiedModelWrapper):
 
     API
     ---
-    invoke(text: str) -> np.ndarray  # Returns 1D vector
-    invoke(texts: List[str]) -> List[np.ndarray]  # Batch processing
+    invoke(text: str) -> Any  # Returns 1D vector (np.ndarray if numpy available)
+    invoke(texts: List[str]) -> Any  # Batch processing (List[np.ndarray] if numpy available)
     """
 
     def _load_model(self) -> Any:
@@ -1112,7 +1119,7 @@ class EmbeddingModelWrapper(UnifiedModelWrapper):
         else:
             return list(embeddings)  # List of 1D arrays
 
-    def get_embedding(self, text: str) -> Union[Any, "np.ndarray"]:
+    def get_embedding(self, text: str) -> Any:
         """
         Convenience method to get embedding for a text.
 
@@ -1120,7 +1127,7 @@ class EmbeddingModelWrapper(UnifiedModelWrapper):
         """
         return self.invoke(text)
 
-    def batch_encode(self, texts: List[str]) -> Union[Any, "np.ndarray"]:
+    def batch_encode(self, texts: List[str]) -> Any:
         """
         Process batch of texts and return 2D matrix.
 

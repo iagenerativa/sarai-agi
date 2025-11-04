@@ -3,6 +3,7 @@ import pytest
 from src import __version__
 from src.sarai_agi.pipeline import PipelineDependencies, create_parallel_pipeline
 
+
 def test_version_no_vacia():
     """La versión declarada no debe estar vacía."""
     assert __version__, "La versión debe declararse en el archivo VERSION"
@@ -13,8 +14,9 @@ def test_version_no_vacia():
 )
 def test_campos_configuracion_existentes(campo):
     """La configuración por defecto debe contener los campos principales."""
-    import yaml
     from pathlib import Path
+
+    import yaml
 
     config_path = Path(__file__).resolve().parents[1] / "config" / "default_settings.yaml"
     config = yaml.safe_load(config_path.read_text())
