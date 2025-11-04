@@ -16,6 +16,7 @@ Este proyecto se distribuye bajo la licencia Creative Commons Attribution-NonCom
 
 **Repository:** [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)  
 **Baseline version:** `v3.5.1`  
+**Python:** `3.11+` ⚡ (+25% rendimiento vs 3.10)  
 **Migration status:** 79% completado (4,955 LOC core + 2,666 tests)  
 **Tests:** 190/193 passing (98.4%) - 3 skipped (known limitations documented)
 
@@ -101,20 +102,22 @@ SARAi_AGI/
 git clone https://github.com/iagenerativa/SARAi_AGI.git
 cd SARAi_AGI
 
-# 2. Crear entorno virtual
-python -m venv .venv
+# 2. Crear entorno virtual con Python 3.11+
+python3.11 -m venv .venv
 source .venv/bin/activate  # Linux/Mac
 # .venv\Scripts\activate   # Windows
 
 # 3. Instalar dependencias
-pip install -r requirements.txt
+pip install -e ".[dev,core_deps]"
 
 # 4. Verificar instalación
-pytest
+pytest -m core
 
 # 5. Verificar versión
-python -c "from src.sarai_agi import __version__; print(__version__)"
+python -c "import sarai_agi; print(f'SARAi AGI v{sarai_agi.__version__}')"
 ```
+
+> **Nota**: SARAi AGI requiere **Python 3.11+**. Ver [PYTHON_311_MIGRATION.md](PYTHON_311_MIGRATION.md) para instrucciones de instalación en Ubuntu 22.04.
 
 ### Quickstart: Pipeline Paralela
 
