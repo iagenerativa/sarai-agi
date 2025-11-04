@@ -781,10 +781,7 @@ class OllamaModelWrapper(UnifiedModelWrapper):
         if think_mode_config and "qwen-3" in model_name.lower():
             # Import classifier only if needed
             try:
-                # TODO: Migrate think_mode_classifier to sarai_agi
-                # from core.think_mode_classifier import get_think_mode_classifier
-                logger.warning("Think Mode classifier not yet migrated, using config default")
-                raise ImportError("Module pending migration")
+                from sarai_agi.cascade import get_think_mode_classifier
                 
                 # Get model_pool if available (to use LFM2)
                 model_pool = config.get("model_pool") if config else None
@@ -1384,15 +1381,8 @@ class CascadeWrapper(Runnable):
     def _get_router(self):
         """Lazy load confidence router."""
         if self._router is None:
-            # TODO: Migrate confidence_router to sarai_agi.cascade
-            # from core.confidence_router import get_confidence_router
-            logger.warning("ConfidenceRouter not yet migrated, using fallback")
-            # Fallback: simple confidence based on input length
-            class SimpleFallbackRouter:
-                def calculate_confidence(self, prompt):
-                    # Simple heuristic: short queries = high confidence
-                    return 0.8 if len(prompt) < 100 else 0.4
-            self._router = SimpleFallbackRouter()
+            from sarai_agi.cascade import get_confidence_router
+            self._router = get_confidence_router()
         return self._router
     
     def _get_lfm2(self):
