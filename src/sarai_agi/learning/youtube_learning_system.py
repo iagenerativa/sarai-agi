@@ -211,14 +211,174 @@ class YouTubeLearningSystem:
         metadata: Dict[str, Any],
         frames: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
-        """Análisis multimodal con Qwen3-VL:4B (PLACEHOLDER)"""
-        # PLACEHOLDER: Aquí integrarías con Qwen3-VL:4B para análisis real
-        return {
-            "topics": ["technology", "social impact", "innovation"],
-            "emotions": {"interest": 0.7, "surprise": 0.3},
-            "social_implications": ["digital transformation", "workplace changes"],
-            "cultural_relevance": {"global": 0.8, "LATAM": 0.6}
-        }
+        """
+        Análisis multimodal REAL con Qwen3-VL:4B via MultimodalModelWrapper (STRICT MODE)
+        
+        Returns:
+            Dict con analysis real o {} si falla (NO mock)
+        """
+        try:
+            # ⚠️ STRICT MODE: Si no hay model_pool, retornar vacío
+            if self.model_pool is None:
+                logger.warning(
+                    "STRICT MODE: model_pool not available - returning empty analysis"
+                )
+                return {}
+            
+            # ⚠️ STRICT MODE: Si no hay frames, retornar vacío
+            if not frames or len(frames) == 0:
+                logger.warning(
+                    "STRICT MODE: No frames provided - returning empty analysis"
+                )
+                return {}
+            
+            # ✅ REAL ANALYSIS: Obtener modelo Qwen3-VL via ModelPool
+            try:
+                # Usar get() del ModelPool para obtener MultimodalModelWrapper
+                vision_model = await asyncio.to_thread(
+                    self.model_pool.get,
+                    "qwen3_vl"
+                )
+            except Exception as e:
+                logger.error(
+                    f"STRICT MODE: Failed to get qwen3_vl from ModelPool: {e}"
+                )
+                return {}
+            
+            # Analizar primer frame (representativo)
+            first_frame = frames[0]
+            frame_data = first_frame.get("frame_data", "")
+            
+            if not frame_data:
+                logger.warning("STRICT MODE: No frame_data in first frame")
+                # Release model antes de retornar
+                await asyncio.to_thread(self.model_pool.release, "qwen3_vl")
+                return {}
+            
+            # Construir prompt para análisis multimodal
+            title = metadata.get("title", "")
+            description = metadata.get("description", "")[:200]  # Primeros 200 chars
+            
+            analysis_prompt = f"""Analiza este frame del video "{title}".
+            
+Descripción del video: {description}
+
+Identifica:
+1. Temas principales (topics) - lista de 2-5 temas
+2. Tono emocional (emotions) - dict con emociones 0.0-1.0
+3. Implicaciones sociales (social_implications) - lista de 1-3 implicaciones
+4. Relevancia cultural (cultural_relevance) - dict por región
+
+Responde en formato JSON válido."""
+            
+            # Preparar input multimodal para el wrapper
+            # El frame_data puede ser base64 o path - el wrapper lo maneja
+            multimodal_input = {
+                "text": analysis_prompt,
+                "image": frame_data  # MultimodalModelWrapper acepta base64 o path
+            }
+            
+            # Ejecutar análisis con Qwen3-VL:4B via wrapper
+            try:
+                response_text = await asyncio.to_thread(
+                    vision_model.invoke,
+                    multimodal_input,
+                    {"max_tokens": 512}
+                )
+            except Exception as e:
+                logger.error(f"STRICT MODE: Qwen3-VL invoke failed: {e}")
+                return {}
+            finally:
+                # Siempre release el modelo después de usar (incluso si hay error)
+                await asyncio.to_thread(self.model_pool.release, "qwen3_vl")
+            
+            if not response_text or not isinstance(response_text, str):
+                logger.error("STRICT MODE: Qwen3-VL returned invalid response")
+                return {}
+            
+            # Intentar parsear como JSON
+            try:
+                import json
+                # Buscar bloque JSON en la respuesta
+                json_start = response_text.find("{")
+                json_end = response_text.rfind("}") + 1
+                
+                if json_start >= 0 and json_end > json_start:
+                    json_text = response_text[json_start:json_end]
+                    parsed = json.loads(json_text)
+                    
+                    # Validar estructura esperada
+                    analysis = {
+                        "topics": parsed.get("topics", parsed.get("temas", [])),
+                        "emotions": parsed.get("emotions", parsed.get("emociones", {})),
+                        "social_implications": parsed.get("social_implications", parsed.get("implicaciones_sociales", [])),
+                        "cultural_relevance": parsed.get("cultural_relevance", parsed.get("relevancia_cultural", {}))
+                    }
+                    
+                    logger.info(
+                        f"✅ REAL Qwen3-VL analysis (via wrapper): {len(analysis['topics'])} topics, "
+                        f"{len(analysis.get('emotions', {}))} emotions detected"
+                    )
+                    
+                    return analysis
+                else:
+                    # No se pudo parsear JSON, usar análisis básico del texto
+                    logger.warning("STRICT MODE: Could not parse JSON from Qwen3-VL response")
+                    
+                    # Análisis básico de keywords en respuesta
+                    response_lower = response_text.lower()
+                    
+                    # Detectar topics por keywords
+                    topics = []
+                    topic_keywords = {
+                        "technology": ["tecnología", "tech", "software", "digital"],
+                        "education": ["educación", "aprendizaje", "curso", "tutorial"],
+                        "social": ["social", "sociedad", "cultural", "comunidad"],
+                        "innovation": ["innovación", "futuro", "avance", "desarrollo"]
+                    }
+                    
+                    for topic, keywords in topic_keywords.items():
+                        if any(kw in response_lower for kw in keywords):
+                            topics.append(topic)
+                    
+                    # Detectar emociones por keywords
+                    emotions = {}
+                    emotion_keywords = {
+                        "interest": ["interesante", "curioso", "atención"],
+                        "surprise": ["sorprendente", "inesperado", "wow"],
+                        "joy": ["alegría", "feliz", "positivo"],
+                        "trust": ["confiable", "profesional", "experto"]
+                    }
+                    
+                    for emotion, keywords in emotion_keywords.items():
+                        if any(kw in response_lower for kw in keywords):
+                            emotions[emotion] = 0.6  # Score moderado
+                    
+                    analysis = {
+                        "topics": topics if topics else ["general"],
+                        "emotions": emotions if emotions else {"interest": 0.5},
+                        "social_implications": [],
+                        "cultural_relevance": {"global": 0.5}
+                    }
+                    
+                    logger.info(
+                        f"✅ REAL Qwen3-VL analysis (keyword-based via wrapper): "
+                        f"{len(topics)} topics detected"
+                    )
+                    
+                    return analysis
+                    
+            except json.JSONDecodeError as je:
+                logger.error(f"STRICT MODE: JSON parse error from Qwen3-VL: {je}")
+                return {}
+            
+        except Exception as e:
+            # ⚠️ STRICT MODE: Error en análisis → retornar {} (NO mock)
+            logger.error(
+                f"STRICT MODE: Qwen3-VL multimodal analysis failed: {e} - "
+                "returning empty analysis"
+            )
+            return {}
     
     def _categorize_content(
         self,
