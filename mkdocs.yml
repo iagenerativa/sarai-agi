@@ -1,0 +1,25 @@
+site_name: SARAi_AGI Docs
+site_url: https://iagenerativa.github.io/sarai-agi/
+repo_url: https://github.com/iagenerativa/sarai-agi
+repo_name: iagenerativa/sarai-agi
+theme:
+  name: material
+  language: es
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+docs_dir: docs
+nav:
+  - Inicio: index.md
+  - Arquitectura: ARCHITECTURE_OVERVIEW.md
+  - Plan de Migración: MIGRATION_PLAN_v3_5_1.md
+  - Roadmap: ROADMAP.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+  - footnotes
+  - attr_list
