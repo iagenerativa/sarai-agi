@@ -261,8 +261,12 @@ def create_trm_classifier(
     return classifier
 
 
+# Conditional exports
 __all__ = [
-    "TRMClassifier",
+    "HAS_TORCH",
     "TRMClassifierSimulated",
     "create_trm_classifier",
 ]
+
+if HAS_TORCH:
+    __all__.append("TRMClassifier")
