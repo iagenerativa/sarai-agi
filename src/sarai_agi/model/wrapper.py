@@ -114,13 +114,20 @@ from abc import abstractmethod
 from typing import Any, Dict, Iterator, List, Optional, Union
 
 import yaml
-from langchain_core.messages import BaseMessage, HumanMessage
 
-# LangChain imports
-from langchain_core.runnables import Runnable
+# LangChain imports (optional)
+try:
+    from langchain_core.messages import BaseMessage, HumanMessage
+    from langchain_core.runnables import Runnable
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    BaseMessage = Any  # type: ignore
+    HumanMessage = Any  # type: ignore
+    Runnable = object  # type: ignore
+    LANGCHAIN_AVAILABLE = False
 
 # Type hints
-InputType = Union[str, Dict[str, Any], List[BaseMessage]]
+InputType = Union[str, Dict[str, Any], List[Any]]  # List[BaseMessage] cuando langchain disponible
 OutputType = Union[str, Dict[str, Any]]
 
 logger = logging.getLogger(__name__)
