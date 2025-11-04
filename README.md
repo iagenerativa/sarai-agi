@@ -6,6 +6,13 @@
 
 > Documentación publicada: https://iagenerativa.github.io/sarai-agi/
 
+## Licencia
+
+Este proyecto se distribuye bajo la licencia Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) — No Comercial, Compartir Igual.
+
+- Texto completo: ver el archivo `LICENSE` en este repositorio
+- Resumen (ES): https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+
 **Repository:** [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)  
 **Baseline version:** `v3.5.1`  
 **Migration status:** 79% completado (4,955 LOC core + 2,666 tests)  
