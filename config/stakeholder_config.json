@@ -1,0 +1,37 @@
+{
+  "primary_user": {
+    "weight": 0.6,
+    "approval_required": true,
+    "notification_priority": 1,
+    "timeout_hours": 24,
+    "expertise_area": "user_experience"
+  },
+  "system_admin": {
+    "weight": 0.3,
+    "approval_required": true,
+    "notification_priority": 2,
+    "timeout_hours": 12,
+    "expertise_area": "system_stability"
+  },
+  "other_agents": {
+    "weight": 0.1,
+    "approval_required": false,
+    "notification_priority": 3,
+    "timeout_hours": 48,
+    "expertise_area": "ecosystem_impact"
+  },
+  "security_auditor": {
+    "weight": 0.0,
+    "approval_required": false,
+    "notification_priority": 1,
+    "timeout_hours": 6,
+    "expertise_area": "security_posture"
+  },
+  "ethics_committee": {
+    "weight": 0.0,
+    "approval_required": false,
+    "notification_priority": 1,
+    "timeout_hours": 8,
+    "expertise_area": "ethical_alignment"
+  }
+}

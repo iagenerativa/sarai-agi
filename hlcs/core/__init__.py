@@ -44,6 +44,24 @@ from hlcs.core.wisdom_driven_silence import (
     SilenceStrategy,
 )
 
+# v0.4 imports
+from hlcs.core.sci import (
+    SocialContractInterface,
+    get_sci_instance,
+    initialize_sci,
+)
+
+from hlcs.core.sci_multi_stakeholder import (
+    MultiStakeholderSCI,
+    StakeholderRole,
+    DecisionType,
+    EvolutionProposal,
+    StakeholderDecision,
+    ConsensusResult,
+    StakeholderConfig,
+    StakeholderDecisionAPI,
+)
+
 __all__ = [
     # Meta-Consciousness v0.2
     "MetaConsciousnessV02",
@@ -77,4 +95,16 @@ __all__ = [
     "SilenceInstruction",
     "SilenceWisdom",
     "SilenceStrategy",
+    # Social Contract Interface v0.4
+    "SocialContractInterface",
+    "get_sci_instance",
+    "initialize_sci",
+    "MultiStakeholderSCI",
+    "StakeholderRole",
+    "DecisionType",
+    "EvolutionProposal",
+    "StakeholderDecision",
+    "ConsensusResult",
+    "StakeholderConfig",
+    "StakeholderDecisionAPI",
 ]
