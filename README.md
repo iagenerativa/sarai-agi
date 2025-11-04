@@ -4,6 +4,8 @@
 [![Docs](https://github.com/iagenerativa/sarai-agi/actions/workflows/docs.yml/badge.svg)](https://github.com/iagenerativa/sarai-agi/actions/workflows/docs.yml)
 [![Pages](https://img.shields.io/badge/docs-GitHub%20Pages-2ea44f)](https://iagenerativa.github.io/sarai-agi/)
 
+> Documentación publicada: https://iagenerativa.github.io/sarai-agi/
+
 **Repository:** [github.com/iagenerativa/sarai-agi](https://github.com/iagenerativa/sarai-agi)  
 **Baseline version:** `v3.5.1`  
 **Migration status:** 79% completado (4,955 LOC core + 2,666 tests)  
