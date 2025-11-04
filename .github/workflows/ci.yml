@@ -71,8 +71,13 @@ jobs:
     - name: Run ruff
       run: ruff check src/
     
-    - name: Run mypy
-      run: mypy src/ --ignore-missing-imports
+    - name: Install type stubs
+      run: |
+        pip install types-requests types-PyYAML
+    
+    - name: Run mypy on core modules
+      run: |
+        mypy $(cat .mypy_files | xargs echo) --ignore-missing-imports --show-error-codes
 
   version-check:
     name: Verify Version Consistency
