@@ -1,0 +1,127 @@
+version: "3.9"
+
+# SARAi HLCS v0.1 - High-Level Conscious System
+# "Supervisor Cognitivo de Alto Nivel"
+#
+# Función: Observa, recuerda y actúa sobre SARAi v3.6.0 sin modificar el core
+# Arquitectura: Zero-touch, contenedor ligero, auto-healing
+# KPIs objetivo: -17% latencia, -0.8GB RAM, -62% fallbacks, -75% intervención humana
+#
+# Arranque rápido:
+#   docker network create sarai 2>/dev/null || true
+#   docker-compose -f docker-compose.hlcs.yml up -d
+#
+# Dashboard: http://localhost:8090/dashboard
+# API: http://localhost:8090/api/v1/docs
+
+services:
+  hlcs:
+    # TODO: Cambiar a imagen real cuando esté publicada
+    # image: ghcr.io/iagenerativa/sarai-hlcs:0.1.0-arm64
+    build:
+      context: ./hlcs
+      dockerfile: Dockerfile
+      args:
+        - PYTHON_VERSION=3.13
+    
+    container_name: sarai-hlcs
+    hostname: hlcs-supervisor
+    restart: unless-stopped
+    
+    environment:
+      # SARAi connection
+      - SARAI_BASE_URL=http://host.docker.internal:8080
+      - SARAI_PROMETHEUS_URL=http://host.docker.internal:8081/metrics
+      
+      # HLCS operation mode
+      - HLCS_MODE=auto                        # auto | suggest-only | dry-run
+      - HLCS_DRY_RUN=false                    # true = solo simula acciones
+      - HLCS_LOG_LEVEL=INFO                   # DEBUG | INFO | WARNING | ERROR
+      
+      # Performance thresholds (cuando actuar)
+      - HLCS_MAX_RAM_GB=11.5                  # Umbral de dolor RAM
+      - HLCS_MAX_LATENCY_S=5.0                # Umbral de dolor latencia
+      - HLCS_MAX_FALLBACK_RATE=0.05           # 5% fallback rate máximo
+      - HLCS_MIN_CACHE_HIT_RATE=0.85          # 85% cache hit mínimo
+      
+      # Self-monitor intervals
+      - HLCS_MONITOR_INTERVAL_S=10            # Frecuencia de monitoreo
+      - HLCS_TELEMETRY_WINDOW_S=60            # Ventana de análisis
+      
+      # Memory settings
+      - HLCS_NARRATIVE_MAX_EPISODES=1000      # Máximo episodios en memoria
+      - HLCS_FAISS_INDEX_DIM=768              # Dimensión embeddings
+      - HLCS_FAISS_NLIST=100                  # Clusters FAISS
+      
+      # Meta-learning
+      - HLCS_ENABLE_NIGHTLY_TRAINING=true     # Entrena MLP cada noche
+      - HLCS_NIGHTLY_TRAINING_HOUR=3          # 3 AM hora local
+      - HLCS_MIN_EPISODES_FOR_TRAINING=50     # Mínimo episodios para entrenar
+      
+      # Rollback safety
+      - HLCS_ENABLE_AUTO_ROLLBACK=true        # Auto-rollback si falla acción
+      - HLCS_ROLLBACK_THRESHOLD_PCT=10        # Rollback si métrica empeora >10%
+      - HLCS_ROLLBACK_WINDOW_S=300            # Ventana para evaluar rollback (5 min)
+    
+    volumes:
+      # Persistent memory
+      - ./hlcs/narratives:/app/memory/narratives
+      - ./hlcs/faiss:/app/memory/faiss
+      - ./hlcs/rollbacks:/app/rollbacks
+      
+      # Config cache (para restaurar)
+      - ./hlcs/config_cache:/app/config_cache
+      
+      # Logs
+      - ./hlcs/logs:/app/logs
+    
+    ports:
+      - "8090:8090"   # API + Dashboard
+      - "8091:8091"   # Prometheus exporter (métricas del HLCS)
+    
+    networks:
+      - sarai
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    
+    # Resource limits (contenedor ligero)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Labels para observability
+    labels:
+      - "sarai.component=hlcs"
+      - "sarai.version=0.1.0"
+      - "sarai.mode=conscious-supervisor"
+      - "sarai.zero-touch=true"
+
+networks:
+  sarai:
+    # Red compartida con SARAi v3.6.0
+    # Crear con: docker network create sarai
+    external: true
+    driver: bridge
+
+# Volúmenes nombrados (alternativa a bind mounts)
+volumes:
+  hlcs_narratives:
+    driver: local
+  hlcs_faiss:
+    driver: local
+  hlcs_rollbacks:
+    driver: local
+  hlcs_config_cache:
+    driver: local
+  hlcs_logs:
+    driver: local
