@@ -119,7 +119,46 @@ python -c "import sarai_agi; print(f'SARAi AGI v{sarai_agi.__version__}')"
 
 > **Nota**: SARAi AGI requiere **Python 3.13+**. Ver [PYTHON_313_MIGRATION.md](PYTHON_313_MIGRATION.md) para instrucciones de instalación en Ubuntu 22.04.
 
-### Quickstart: Pipeline Paralela
+### Quickstart: Sistema Integrado (v3.6.0) ⭐ **NUEVO**
+
+```python
+import asyncio
+from src.sarai_agi.core import create_integrated_pipeline
+
+# Crear pipeline completamente integrada
+# Conecta todos los componentes: TRM → MCP → Emotion → Router → Models → RAG
+pipeline = create_integrated_pipeline()
+
+# Ejecutar query
+async def main():
+    result = await pipeline.run({
+        "input": "¿Cómo funciona el aprendizaje por refuerzo?"
+    })
+    
+    print(result["response"])
+    print(f"Agent: {result['metadata']['agent']}")  # expert/empathy/balanced/rag
+    print(f"Emotion: {result['metadata'].get('emotion', {}).get('emotion', 'N/A')}")
+    
+    await pipeline.shutdown()
+
+asyncio.run(main())
+```
+
+**CLI Integrada:**
+```bash
+# Query única
+python cli.py "¿Cómo está el clima en Madrid?"
+
+# Modo interactivo
+python cli.py --interactive
+
+# Con información detallada
+python cli.py --verbose "¿Qué es Python?"
+```
+
+Ver [INTEGRATION_ARCHITECTURE.md](docs/INTEGRATION_ARCHITECTURE.md) para arquitectura completa.
+
+### Quickstart: Pipeline Paralela (API de bajo nivel)
 
 ```python
 import asyncio
@@ -175,29 +214,47 @@ print(f"Latencia estimada: {decision.metadata.estimated_latency_ms} ms")
 
 ## Documentación
 
+- **[INTEGRATION_ARCHITECTURE.md](docs/INTEGRATION_ARCHITECTURE.md)**: ⭐ **Sistema integrado completo v3.6.0**
 - **[ARCHITECTURE_OVERVIEW.md](docs/ARCHITECTURE_OVERVIEW.md)**: Diseño de capas y componentes
+- **[RAG_MEMORY.md](docs/RAG_MEMORY.md)**: Sistema RAG Memory completo
 - **[MIGRATION_PLAN_v3_5_1.md](docs/MIGRATION_PLAN_v3_5_1.md)**: Estrategia de migración desde SARAi_v2
 - **[ROADMAP.md](docs/ROADMAP.md)**: Hoja de ruta v3.6 → v4.0
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**: Guía para contribuidores
 
 ## Estado del Proyecto
 
-**Versión actual:** `v3.5.1` (Baseline estable)
+**Versión actual:** `v3.6.0` ⭐ **SISTEMA INTEGRADO COMPLETO**
 
 **Módulos migrados:**
 - ✅ Pipeline paralela con orquestación async
 - ✅ Selector de cuantización dinámica
 - ✅ Sistema de configuración YAML
-- ✅ Test suite completo (11 pruebas)
+- ✅ TRM Classifier (515 LOC + 11 tests)
+- ✅ MCP Core (566 LOC + 7 tests)
+- ✅ Model Pool con cache LRU/TTL (866 LOC + 38 tests)
+- ✅ Emotional Context Engine (650 LOC + 48 tests)
+- ✅ Cascade Router (541 LOC + tests)
+- ✅ RAG Agent completo (337 LOC + 22 tests)
+- ✅ **Sistema Integrador** (580 LOC + 24 tests E2E) ⭐ **NUEVO**
+- ✅ **CLI Integrada** (250 LOC) ⭐ **NUEVO**
 
-**Próximos pasos (v3.6.0):**
-- [ ] TRM Classifier integration
-- [ ] MCP weighting system
-- [ ] Model pool con cache LRU/TTL
-- [ ] Emotional context engine
-- [ ] Telemetría avanzada
+**Funcionalidades v3.6.0:**
+- ✅ Integración completa de todos los componentes
+- ✅ Factory functions para dependency injection
+- ✅ CLI con modo interactivo
+- ✅ Tests E2E end-to-end (24 tests)
+- ✅ Graceful degradation en todos los componentes
+- ✅ Documentación de arquitectura integrada
 
-Ver [ROADMAP.md](docs/ROADMAP.md) para detalles.
+**Próximos pasos (v3.7.0):**
+- [ ] Fluidity Layer (tone smoothing)
+- [ ] Vision integration (Qwen3-VL-4B)
+- [ ] Code integration (VisCoder2-7B)
+- [ ] Audio integration (Omni-3B + NLLB)
+- [ ] Omni-Loop refinement
+- [ ] Skills integration (SQL, Bash, Network)
+
+Ver [ROADMAP.md](docs/ROADMAP.md) y [INTEGRATION_ARCHITECTURE.md](docs/INTEGRATION_ARCHITECTURE.md) para detalles.
 
 ## Tests
 
