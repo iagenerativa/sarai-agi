@@ -1,0 +1,219 @@
+# SARAi AGI v3.7.0 - Multi-Source Search + Multimodal Learning Configuration
+# Extiende config/sarai.yaml existente manteniendo 100% compatibilidad
+
+version_base: "3.7.0"
+
+# ==================== MULTI-SOURCE SEARCH ====================
+search_integration:
+  multi_source_search:
+    enabled: true
+    max_sources: 6
+    verification_level: "STANDARD"  # BASIC, STANDARD, COMPREHENSIVE
+    parallel_search: true
+    max_concurrent_requests: 8
+    cache_ttl_seconds: 300
+    consensus_threshold: 0.7
+    
+  search_strategies:
+    expert_deep:
+      description: "Consultas complejas, máximo rigor"
+      cascade_tier: 3  # Qwen-3-8B
+      required_sources: 5
+      min_consensus_score: 0.8
+      timeout_seconds: 45
+      emotional_threshold: 0.3
+      
+    rapid_scan:
+      description: "Consultas simples, velocidad optimizada"
+      cascade_tier: 1  # LFM2-1.2B  
+      required_sources: 3
+      min_consensus_score: 0.6
+      timeout_seconds: 15
+      emotional_threshold: 0.1
+      
+    emotional_context:
+      description: "Contenido emocional, sensibilidad cultural"
+      cascade_tier: 2  # MiniCPM-4.1
+      required_sources: 4
+      min_consensus_score: 0.7
+      timeout_seconds: 25
+      emotional_threshold: 0.7
+      cultural_adaptation: true
+
+  source_configuration:
+    academic_papers:
+      weight: 0.9
+      credibility_score: 0.95
+      update_frequency: "real-time"
+      priority_order: 1
+      specializations: ["research", "technical", "academic"]
+      
+    news_agencies:
+      weight: 0.8
+      credibility_score: 0.85
+      update_frequency: "real-time"
+      priority_order: 2
+      specializations: ["current_events", "politics", "breaking_news"]
+      
+    technical_docs:
+      weight: 0.7
+      credibility_score: 0.80
+      update_frequency: "weekly"
+      priority_order: 3
+      specializations: ["programming", "documentation", "tutorials"]
+      
+    industry_reports:
+      weight: 0.6
+      credibility_score: 0.75
+      update_frequency: "monthly"
+      priority_order: 4
+      specializations: ["business", "market_analysis", "industry_trends"]
+      
+    wikipedia:
+      weight: 0.5
+      credibility_score: 0.70
+      update_frequency: "daily"
+      priority_order: 5
+      specializations: ["general_knowledge", "definitions", "background"]
+      
+    stackoverflow:
+      weight: 0.4
+      credibility_score: 0.65
+      update_frequency: "real-time"
+      priority_order: 6
+      specializations: ["programming", "technical_questions", "solutions"]
+
+# ==================== SOCIAL LEARNING ====================
+social_learning:
+  enabled: true
+  continuous_learning: false  # Set to true for 24/7 learning
+  learning_cycle_interval_minutes: 5
+  max_content_per_batch: 10
+  insight_confidence_threshold: 0.7
+  
+  learning_domains:
+    social_behavior:
+      priority: 0.9
+      confidence_threshold: 0.8
+      cultural_sensitive: true
+    technology_trends:
+      priority: 0.85
+      confidence_threshold: 0.75
+      cultural_sensitive: false
+    cultural_patterns:
+      priority: 0.8
+      confidence_threshold: 0.7
+      cultural_sensitive: true
+    lifestyle_trends:
+      priority: 0.7
+      confidence_threshold: 0.6
+      cultural_sensitive: true
+    economic_changes:
+      priority: 0.75
+      confidence_threshold: 0.7
+      cultural_sensitive: false
+    scientific_progress:
+      priority: 0.8
+      confidence_threshold: 0.8
+      cultural_sensitive: false
+  
+  cultural_adaptation:
+    enabled: true
+    regions: ["LATAM", "NA", "EU", "ASIA", "AFRICA", "OCEANIA", "ME", "SS"]
+    adaptation_strategy: "progressive"  # immediate, progressive, batch
+    cultural_weight: 0.3
+
+# ==================== YOUTUBE LEARNING ====================
+youtube_learning:
+  enabled: true
+  auto_discovery: false  # Set to true for automatic trending discovery
+  discovery_interval_minutes: 30
+  
+  content_priorities:
+    educational: 0.9
+    social_commentary: 0.85
+    technology_reviews: 0.8
+    cultural_documentary: 0.75
+    business_analysis: 0.7
+    scientific_content: 0.8
+    lifestyle_vlogs: 0.6
+  
+  analysis_settings:
+    default_depth: "deep"  # shallow, medium, deep
+    max_frames_per_video: 30
+    min_learning_value: 0.6
+    cultural_relevance_threshold: 0.6
+  
+  trending_detection:
+    methods: ["engagement_analysis", "comment_sentiment", "view_velocity"]
+    time_window_hours: 24
+    min_views_threshold: 10000
+    viral_potential_threshold: 0.7
+
+# ==================== PIPELINE INTEGRATION ====================
+pipeline_integration:
+  # Extiende pipeline RAG de 6 pasos
+  new_step_2a: "generate_intelligent_subqueries"  # Después de intent analysis
+  new_step_3a: "parallel_multi_source_search"     # Después de web search
+  new_step_4a: "cross_verify_sources"             # Antes de synthesis
+  
+  # Dependency injection requirements
+  requires_dependencies:
+    - "cascade_oracle"
+    - "emotional_context" 
+    - "trm_classifier"
+    - "web_cache"  # Sistema existente
+    - "web_audit"  # Sistema existente
+    - "multi_source_searcher"  # NUEVO
+    - "social_learning_engine"  # NUEVO
+    - "youtube_learning_system"  # NUEVO
+    
+  graceful_degradation:
+    if_multi_source_fails: "fallback_to_single_source"
+    if_cascade_fails: "fallback_to_basic_models"
+    if_verification_fails: "proceed_with_single_source"
+    if_youtube_fails: "skip_video_analysis"
+    if_social_learning_fails: "skip_social_insights"
+
+# ==================== TELEMETRY ====================
+telemetry_metrics:
+  # Multi-source metrics
+  multi_source_searches_total: counter
+  multi_source_search_duration_seconds: histogram
+  consensus_score_histogram: histogram
+  source_verification_success_rate: gauge
+  fallback_to_single_source_rate: gauge
+  
+  # Social learning metrics
+  insights_generated_total: counter
+  learning_domains_active: gauge
+  cultural_adaptation_rate: gauge
+  
+  # YouTube metrics
+  youtube_videos_analyzed_total: counter
+  youtube_analysis_duration_seconds: histogram
+  youtube_learning_value_avg: gauge
+  youtube_viral_potential_avg: gauge
+
+# ==================== BILINGUAL ALIASES ====================
+# Compatible con tu sistema de alias existente en configuration.py
+aliases:
+  # Multi-source search
+  "multi_source_search": "busqueda_multi_fuente"
+  "parallel_search": "busqueda_paralela"
+  "source_verification": "verificacion_fuentes"
+  "consensus_score": "puntuacion_consenso"
+  "verification_level": "nivel_verificacion"
+  
+  # Social learning
+  "social_learning": "aprendizaje_social"
+  "learning_domain": "dominio_aprendizaje"
+  "cultural_adaptation": "adaptacion_cultural"
+  "insight_confidence": "confianza_insight"
+  
+  # YouTube learning
+  "youtube_learning": "aprendizaje_youtube"
+  "content_category": "categoria_contenido"
+  "trending_score": "puntuacion_tendencia"
+  "viral_potential": "potencial_viral"
+  "learning_value": "valor_aprendizaje"

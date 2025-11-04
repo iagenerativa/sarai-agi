@@ -64,6 +64,17 @@ def get_section(settings: Dict[str, Any], section: str, default: Optional[Dict[s
         aliases = {
             "quantization": ["quantizacion", "cuantizacion"],
             "pipeline": ["orquestacion", "pipeline_settings"],
+            # v3.7.0 Multi-Source Search aliases
+            "multi_source_search": ["busqueda_multi_fuente", "multi_source"],
+            "source_verification": ["verificacion_fuentes", "verification"],
+            "consensus_score": ["puntuacion_consenso", "consensus"],
+            # v3.7.0 Social Learning aliases
+            "social_learning": ["aprendizaje_social", "social"],
+            "learning_domain": ["dominio_aprendizaje", "domain"],
+            "cultural_adaptation": ["adaptacion_cultural", "cultural"],
+            # v3.7.0 YouTube Learning aliases
+            "youtube_learning": ["aprendizaje_youtube", "youtube"],
+            "content_category": ["categoria_contenido", "category"],
         }
         alias_names = aliases.get(section, [])
         value = next((settings[name] for name in alias_names if name in settings), None)
