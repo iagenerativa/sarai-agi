@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sarai-agi"
-version = "3.5.1"
+version = "3.6.0"
 description = "SARAi AGI - Sistema Autónomo Recursivo de Agente Inteligente"
 readme = "README.md"
 requires-python = ">=3.13"
