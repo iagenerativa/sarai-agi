@@ -19,6 +19,9 @@ import pytest
 from sarai_agi.agents.rag import SENTINEL_RESPONSES, execute_rag, sentinel_response
 from sarai_agi.memory.web_audit import WebAuditLogger
 
+# Mark all RAG tests as requiring requests
+pytestmark = pytest.mark.requires_requests
+
 # Imports del sistema a testear
 from sarai_agi.memory.web_cache import WebCache
 

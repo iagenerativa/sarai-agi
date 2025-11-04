@@ -15,6 +15,7 @@ from sarai_agi.classifier import (
 )
 
 
+@pytest.mark.core
 class TestTRMClassifierSimulated:
     """Tests para clasificador simulado (sin torch)."""
 

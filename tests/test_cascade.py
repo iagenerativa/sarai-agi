@@ -7,6 +7,7 @@ classification.
 Version: v3.5.1
 """
 
+import pytest
 from unittest.mock import Mock
 
 from sarai_agi.cascade import (
@@ -18,6 +19,8 @@ from sarai_agi.cascade import (
 
 # ============================================================================
 # ConfidenceRouter Tests
+
+@pytest.mark.core
 # ============================================================================
 
 class TestConfidenceRouter:

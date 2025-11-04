@@ -16,6 +16,7 @@ from sarai_agi.mcp import (
 )
 
 
+@pytest.mark.core
 class TestMCPRules:
     """Tests para MCP basado en reglas."""
 

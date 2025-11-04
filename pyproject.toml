@@ -38,9 +38,24 @@ dev = [
     "pytest-cov>=5.0.0",
     "ruff>=0.5.0",
     "mypy>=1.10.0",
+    "types-requests",
+    "types-PyYAML",
 ]
 psutil = [
     "psutil>=6.0.0",
+]
+# Dependencies for full test suite
+test_full = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.24.0", 
+    "pytest-cov>=5.0.0",
+    "requests>=2.31.0",
+    "llama-cpp-python>=0.2.0",
+    "qdrant-client>=1.7.0",
+    "chromadb>=0.4.0",
+    "transformers>=4.40.0",
+    "openai>=1.0.0",
+    "torch>=2.0.0",
 ]
 
 [project.urls]
@@ -60,6 +75,13 @@ addopts = "-v --strict-markers"
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests (requires external services)",
+    "requires_llama: marks tests that require llama-cpp-python",
+    "requires_qdrant: marks tests that require qdrant-client", 
+    "requires_chromadb: marks tests that require chromadb",
+    "requires_transformers: marks tests that require transformers",
+    "requires_requests: marks tests that require requests",
+    "requires_openai: marks tests that require openai",
+    "core: marks tests for core functionality (always run)",
 ]
 
 [tool.ruff]
