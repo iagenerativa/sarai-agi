@@ -1,8 +1,7 @@
-# SARAi v2.16.1 - Configuración Central
+# SARAi v3.7.0 - Configuración Central
+# Feature: MCP Server - Orquestador modular
 # Hardware: CPU-only, 16GB RAM (12GB usables)
-# NEW v2.16.1: Best-of-Breed - Especialización Audio + Visión
-# Arquitectura: SOLAR HTTP + LFM2 + Omni-3B + Qwen3-VL-4B
-# NEW v2.3: Prefetching + GGUF Context-Aware + Fast-Cache
+# Arquitectura: MCP Server + Módulos (SAUL, Vision, Audio, RAG, Memory, Skills)
 
 runtime:
   backend: "cpu"  # "cpu" (GGUF) o "gpu" (4-bit) cuando migres
@@ -12,6 +11,48 @@ runtime:
   max_concurrent_skills: 3  # v2.12: Máximo de skills MoE simultáneos
   n_threads: 6  # os.cpu_count() - 2, deja núcleos libres (NEW v2.3)
   strategy: "hybrid_http_gguf"  # v2.16: HTTP para grandes, GGUF para pequeños
+
+# NEW v3.7.0: MCP Server Configuration
+mcp_server:
+  enabled: true  # Feature flag para activar/desactivar MCP Server
+  host: "0.0.0.0"  # Escuchar en todas las interfaces
+  port: 3000  # Puerto por defecto (standard MCP)
+  log_level: "info"  # debug, info, warning, error
+  
+  # Módulos a cargar
+  modules:
+    saul:
+      enabled: true
+      host: "localhost"  # Host del servidor SAUL gRPC
+      port: 50051  # Puerto gRPC de SAUL
+      timeout: 5.0  # Timeout en segundos
+      fallback_mode: true  # Usar mock si SAUL no disponible
+    
+    # Futuros módulos (comentados hasta implementación)
+    # vision:
+    #   enabled: false
+    #   host: "localhost"
+    #   port: 3001
+    # 
+    # audio:
+    #   enabled: false
+    #   host: "localhost"
+    #   port: 3002
+    # 
+    # rag:
+    #   enabled: false
+    #   host: "localhost"
+    #   port: 3003
+    # 
+    # memory:
+    #   enabled: false
+    #   host: "localhost"
+    #   port: 3004
+    # 
+    # skills:
+    #   enabled: false
+    #   host: "localhost"
+    #   port: 3005
 
 # NEW v3.5.1: Pipeline Paralelo - Reduce latencia 20% (-59ms)
 pipeline:

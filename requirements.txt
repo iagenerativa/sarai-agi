@@ -5,9 +5,16 @@ pytest-asyncio>=0.24.0
 # Core dependencies para pipeline y cuantización
 psutil>=6.0.0  # RAM monitoring
 
+# MCP Server dependencies (FastAPI)
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic>=2.0.0
+
+# gRPC para comunicación con SAUL
+grpcio>=1.60.0
+grpcio-tools>=1.60.0
+
 # Futuros módulos (comentados hasta migración)
 # torch>=2.0.0
 # transformers>=4.40.0
 # langchain>=0.3.0
-# fastapi>=0.115.0
-# uvicorn>=0.32.0

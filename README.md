@@ -102,8 +102,8 @@ SARAi_AGI/
 git clone https://github.com/iagenerativa/SARAi_AGI.git
 cd SARAi_AGI
 
-# 2. Crear entorno virtual con Python 3.13+
-python3.13 -m venv .venv
+# 2. Crear entorno virtual con Python 3.12+
+python3.12 -m venv .venv
 source .venv/bin/activate  # Linux/Mac
 # .venv\Scripts\activate   # Windows
 
@@ -117,7 +117,7 @@ pytest -m core
 python -c "import sarai_agi; print(f'SARAi AGI v{sarai_agi.__version__}')"
 ```
 
-> **Nota**: SARAi AGI requiere **Python 3.13+**. Ver [PYTHON_313_MIGRATION.md](PYTHON_313_MIGRATION.md) para instrucciones de instalación en Ubuntu 22.04.
+> **Nota**: SARAi AGI requiere **Python 3.12+**. Python 3.13+ con no-GIL está soportado pero es opcional.
 
 ### Quickstart: Sistema Integrado (v3.6.0) ⭐ **NUEVO**
 
